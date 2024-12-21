@@ -9,7 +9,7 @@ import { Divider } from '@mui/material';
 
 export default function Sidebar() {
   const theme = useTheme();
-  const isMd = useMediaQuery(theme.breakpoints.down("md"));
+  const isMd:boolean = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <div>

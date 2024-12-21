@@ -15,22 +15,20 @@ import { useTheme } from "@mui/material/styles";
 import DrawerList from "../DrawerList/page";
 
 export default function Dashboard() {
-  const [auth, setAuth] = React.useState(true);
+  const [auth, setAuth] = React.useState<boolean>(true);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const theme = useTheme();
-
-  // Determine if the screen size is "xs"
-  const isMd = useMediaQuery(theme.breakpoints.down("md"));
+  const isMd: boolean = useMediaQuery(theme.breakpoints.down("md"));
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = ():void => {
     setAnchorEl(null);
   };
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);

@@ -42,3 +42,6 @@ postcss.config.mjs
 tailwind.config.ts
 tsconfig.json
 tsconfig.tsbuildinfo
+eslint.config.mjs
+next-env.d.ts
+next.config.ts
