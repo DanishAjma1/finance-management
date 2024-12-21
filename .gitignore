@@ -1,0 +1,44 @@
+# Node modules
+node_modules/
+
+# Next.js build output
+.next/
+
+# Log files
+npm-debug.log
+yarn-debug.log
+pnpm-debug.log
+
+# Environment variables
+.env/
+
+# macOS
+.DS_Store
+
+# Test coverage
+coverage/
+
+# Debug logs
+*.log
+
+# Vercel deployment files
+.vercel/
+
+# Netlify deployment files
+.netlify/
+
+# Jest snapshots
+__snapshots__/
+
+# Optional: Ignore output directory
+/dist/
+
+eslint.config.mjs
+next-env.d.ts
+next.config.ts
+package-lock.json
+package.json
+postcss.config.mjs
+tailwind.config.ts
+tsconfig.json
+tsconfig.tsbuildinfo
