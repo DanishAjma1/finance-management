@@ -49,4 +49,4 @@ Ensure 100% test coverage for critical features.
 
 ### Security and Data Integrity:
 Follow security guidelines to protect sensitive information, such as proper handling of user data and secure input validation.
-Avoid committing sensitive information or credentials to the repository.
+Avoid committing sensitive information or credentials to the repository to ensure confidentiality.
