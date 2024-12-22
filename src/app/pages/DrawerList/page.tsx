@@ -9,8 +9,14 @@ import ListItem from "@mui/material/ListItem";
 import Link from "next/link";
 import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
+import { JSX } from "react";
 
-const navItems = [
+type NavItem = {
+  text: string;
+  icon: JSX.Element;
+  path: string;
+};
+const navItems:NavItem[] = [
   { text: "Home", icon: <InboxIcon />, path: "/" },
   {
     text: "Add User Information",
@@ -21,7 +27,7 @@ const navItems = [
   { text: "Drafts", icon: <InboxIcon />, path: "/drafts" },
 ];
 
-const DrawerList = () => (
+const DrawerList:React.FC = () => (
   <Box role="presentation" sx={{ width: '100%' }}>
     <List>
       {navItems.map((item) => (

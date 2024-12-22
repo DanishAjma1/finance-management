@@ -1,6 +1,6 @@
 "use client"
 import * as React from 'react';
-import DrawerList from '../DrawerList/page';
+import DrawerList from '../drawerList/page';
 import useMediaQuery from '@mui/system/useMediaQuery';
 import { useTheme } from '@mui/system';
 import Image from 'next/image';
@@ -9,7 +9,7 @@ import { Divider } from '@mui/material';
 
 export default function Sidebar() {
   const theme = useTheme();
-  const isMd = useMediaQuery(theme.breakpoints.down("md"));
+  const isMd:boolean = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <div>
