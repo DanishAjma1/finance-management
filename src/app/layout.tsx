@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Grid from "@mui/system/Grid";
 import Dashboard from "./pages/Dashboard/page";
 import Sidebar from "./pages/Sidebar/page";
 
@@ -31,8 +30,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="w-full flex">
-          <div className="lg:w-[20%]">
+          <div className="lg:w-[20%] mt-10 min-w-fit ">
+            <div className="ml-2 static rounded-xl shadow-lg h-[100%]">
             <Sidebar />
+            </div>
           </div>
           <div className="w-full lg:w-[80%]">
             <div>

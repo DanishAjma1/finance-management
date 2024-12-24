@@ -21,10 +21,10 @@ const navItems:NavItem[] = [
   {
     text: "Add User Information",
     icon: <MailIcon />,
-    path: "/pages/AddUserInformation",
+    path: "/pages/addUserInfo",
   },
-  { text: "Send email", icon: <MailIcon />, path: "/send-email" },
-  { text: "Drafts", icon: <InboxIcon />, path: "/drafts" },
+  { text: "SignIn", icon: <MailIcon />, path: "/pages/signIn" },
+  { text: "SignUp", icon: <InboxIcon />, path: "/pages/signUp" },
 ];
 
 const DrawerList = (): JSX.Element => (
