@@ -10,16 +10,13 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { Drawer } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
-import DrawerList from "../DrawerList/page";
+import DrawerList from "../drawerList/page";
+import Grid2 from "@mui/material/Grid2";
 
 export default function Dashboard() {
-  const [auth, setAuth] = React.useState<boolean>(true);
+  const [auth] = React.useState<boolean>(true);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const theme = useTheme();
-  const isMd: boolean = useMediaQuery(theme.breakpoints.down("md"));
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -35,10 +32,10 @@ export default function Dashboard() {
   };
 
   return (
-    <Box>
-      <AppBar position="static" sx={{backgroundColor:'black'}}>
+    <Box >
+      <AppBar position="static" sx={{ backgroundColor: "black",borderRadius:5 }}>
         <Toolbar>
-          {isMd && (
+          <Grid2 sx={{ display: { md: "none" } }}>
             <IconButton
               size="large"
               edge="start"
@@ -49,12 +46,16 @@ export default function Dashboard() {
             >
               <MenuIcon />
             </IconButton>
-          )}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          </Grid2>
+          <Typography
+            variant="h6"
+            component="p"
+            sx={{ flexGrow: 1, fontWeight: "bold" }}
+          >
             FINANCE MANAGEMENT
           </Typography>
           {auth && (
-            <div>
+            <Grid2>
               <IconButton
                 size="large"
                 aria-label="account of current user"
@@ -83,7 +84,7 @@ export default function Dashboard() {
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
               </Menu>
-            </div>
+            </Grid2>
           )}
         </Toolbar>
         <Drawer open={open} onClose={toggleDrawer(false)}>

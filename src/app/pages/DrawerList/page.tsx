@@ -1,7 +1,6 @@
 "use client";
-import { Box } from "@mui/system";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+import { Box } from "@mui/material";
+import { ListItemIcon, ListItemText } from "@mui/material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import List from "@mui/material/List";
@@ -9,14 +8,15 @@ import ListItem from "@mui/material/ListItem";
 import Link from "next/link";
 import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
-import { JSX, ReactNode } from "react";
+import { JSX } from "react";
+import { styled } from "@mui/material/styles";
 
-interface NavItem {
+type NavItem = {
   text: string;
-  icon: ReactNode;
+  icon: JSX.Element;
   path: string;
-}
-const navItems:NavItem[] = [
+};
+const navItems: NavItem[] = [
   { text: "Home", icon: <InboxIcon />, path: "/" },
   {
     text: "Add User Information",
@@ -27,46 +27,45 @@ const navItems:NavItem[] = [
   { text: "SignUp", icon: <InboxIcon />, path: "/pages/signUp" },
 ];
 
-const DrawerList = (): JSX.Element => (
-  <Box role="presentation" sx={{ width: '100%' }}>
-    <List>
-      {navItems.map((item) => (
-        <ListItem key={item.text} disablePadding>
-          <Button
-            component={Link}
-            href={item.path}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-center",
-              alignItems: "center",
-              width: "100%",
-              textTransform: "none",
-              color: "black",
-              backgroundColor: "white",
-              "&:hover": {
-                backgroundColor: "black",
-                color: "white",
-                "& .MuiListItemIcon-root": {
-                  color: "white",
-                },
-              },
-            }}
-          >
-            <ListItemIcon
-              className="MuiListItemIcon-root"
-              sx={{
-                color: "black",
-              }}
-            >
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.text} />
-          </Button>
-        </ListItem>
-      ))}
-    </List>
-    <Divider />
-  </Box>
-);
+const StyledButton = styled(Button)(({}) => ({
+  display: "flex",
+  width: "100%",
+  textTransform: "none",
+  color: "black",
+  "&:hover": {
+    backgroundColor: "black",
+    color: "white",
+    "& .MuiListItemIcon-root": {
+      color: "white",
+    },
+  },
+}));
 
+const StyledListItem = styled(ListItem)({
+  padding: 0,
+});
+
+const StyledListItemIcon = styled(ListItemIcon)({
+  color: "black",
+});
+
+const DrawerList = () => {
+  return (
+    <Box role="presentation" sx={{ width: "100%" }}>
+      <List>
+        {navItems.map((item) => (
+          <StyledListItem key={item.text} disablePadding>
+            <StyledButton component={Link} href={item.path}>
+              <StyledListItemIcon className="MuiListItemIcon-root">
+                {item.icon}
+              </StyledListItemIcon>
+              <ListItemText primary={item.text} />
+            </StyledButton>
+          </StyledListItem>
+        ))}
+      </List>
+      <Divider />
+    </Box>
+  );
+};
 export default DrawerList;

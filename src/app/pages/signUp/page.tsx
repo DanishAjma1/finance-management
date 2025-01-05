@@ -5,22 +5,26 @@ import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
-import FormControl from "@mui/material/FormControl";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
+import { Grid2 } from "@mui/material";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignSelf: "center",
-  width: "100%",
+  width: "90%",
   padding: "40px 30px 40px 30px",
-  gap: theme.spacing(4),
+  gap: theme.spacing(3),
+  justifyContent: "center",
+  textAlign: "center",
+
   margin: "auto",
   [theme.breakpoints.up("sm")]: {
     maxWidth: "450px",
@@ -29,77 +33,35 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
+  // minHeight: "70%",
   padding: theme.spacing(4),
+  flexDirection: "column",
+  justifyContent: "space-between",
 }));
 
-export default function SignIn() {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
-  const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] =
-    React.useState("");
+const FormContainer = styled(Box)(({}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "90%",
+  alignSelf: "center",
+}));
+const validationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters long")
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm Password is required"),
+});
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError || confirmPasswordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-      confirm_password: data.get("confirm-password"),
-    });
-  };
-
-  const validateInputs = () => {
-    const email = document.getElementById("email") as HTMLInputElement;
-    const password = document.getElementById("password") as HTMLInputElement;
-    const confirm_password = document.getElementById(
-      "confirm-password"
-    ) as HTMLInputElement;
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    if (
-      confirm_password.value.length < 6 ||
-      confirm_password.value !== password.value
-    ) {
-      setConfirmPasswordError(true);
-      setConfirmPasswordErrorMessage("Passwords do not match.");
-      isValid = false;
-    } else {
-      setConfirmPasswordError(false);
-      setConfirmPasswordErrorMessage("");
-    }
-    return isValid;
-  };
-
+export default function SignUp() {
   return (
-    <div>
+    <Grid2>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
+      <SignInContainer>
         <Card variant="outlined">
           <Typography
             component="h1"
@@ -113,87 +75,104 @@ export default function SignIn() {
           >
             Sign Up
           </Typography>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col w-[100%] gap-7"
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+              confirmPassword: "",
+              remember: false,
+            }}
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+              console.log("Form submitted:", values);
+            }}
           >
-            <FormControl>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                label="Email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={emailError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                name="password"
-                label="Password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                required
-                fullWidth
-                variant="outlined"
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <TextField
-                error={confirmPasswordError}
-                helperText={confirmPasswordErrorMessage}
-                name="password"
-                label="Confirm Password"
-                placeholder="••••••"
-                type="password"
-                id="confirm-password"
-                autoComplete="confirm-password"
-                required
-                fullWidth
-                variant="outlined"
-                color={confirmPasswordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-              sx={{
-                bgcolor: "black",
-              }}
-            >
-              Sign in
-            </Button>
-            <Typography sx={{ textAlign: "center" }}>
-              Already have an account?{" "}
-              <Link
-                href="/pages/signIn"
-                variant="body2"
-                sx={{ alignSelf: "center" }}
-              >
-                Sign in
-              </Link>
-            </Typography>
-          </form>
+            {({ values, handleChange, handleSubmit, errors, touched }) => (
+              <FormContainer component="form" onSubmit={handleSubmit} gap={2}>
+                <TextField
+                  error={touched.email && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                  id="email"
+                  label="Email"
+                  type="email"
+                  name="email"
+                  placeholder="your@email.com"
+                  autoComplete="email"
+                  autoFocus
+                  required
+                  fullWidth
+                  variant="outlined"
+                  value={values.email}
+                  onChange={handleChange}
+                />
+                <TextField
+                  error={touched.password && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                  id="password"
+                  label="Password"
+                  type="password"
+                  name="password"
+                  placeholder="••••••"
+                  autoComplete="current-password"
+                  required
+                  fullWidth
+                  variant="outlined"
+                  value={values.password}
+                  onChange={handleChange}
+                />
+                <TextField
+                  error={
+                    touched.confirmPassword && Boolean(errors.confirmPassword)
+                  }
+                  helperText={touched.confirmPassword && errors.confirmPassword}
+                  id="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="••••••"
+                  autoComplete="confirm-password"
+                  required
+                  fullWidth
+                  variant="outlined"
+                  value={values.confirmPassword}
+                  onChange={handleChange}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="remember"
+                      color="primary"
+                      checked={values.remember}
+                      onChange={handleChange}
+                    />
+                  }
+                  label="Remember me"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    bgcolor: "black",
+                  }}
+                >
+                  Sign Up
+                </Button>
+                <Typography sx={{ textAlign: "center" }}>
+                  Already have an account?{" "}
+                  <Link
+                    href="/pages/signIn"
+                    variant="body2"
+                    sx={{ alignSelf: "center" }}
+                  >
+                    Sign in
+                  </Link>
+                </Typography>
+              </FormContainer>
+            )}
+          </Formik>
         </Card>
       </SignInContainer>
-    </div>
+    </Grid2>
   );
 }

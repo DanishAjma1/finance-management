@@ -1,44 +1,57 @@
-"use client"
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import ForgotPassword from './forgotPassword';
+"use client";
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import Link from "@mui/material/Link";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import MuiCard from "@mui/material/Card";
+import { styled } from "@mui/material/styles";
+import ForgotPassword from "./forgotPassword";
+import { Box } from "@mui/material";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding:'40px 30px 40px 30px',
-  gap: theme.spacing(4),
-  margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
+  display: "flex",
+  flexDirection: "column",
+  alignSelf: "center",
+  width: "100%",
+  padding: "40px 30px 40px 30px",
+  gap: theme.spacing(3),
+  margin: "auto",
+  [theme.breakpoints.up("sm")]: {
+    maxWidth: "450px",
   },
-  borderRadius:'10px' ,
+  borderRadius: "10px",
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  minHeight: '100%',
-  padding: theme.spacing(4),
-  
+  minHeight: "100%",
+  padding: theme.spacing(2),
 }));
 
+const FormContainer = styled(Box)(({}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "90%",
+  alignSelf: "center",
+}));
+// Validation schema using Yup
+const validationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters long")
+    .required("Password is required"),
+});
+
 export default function SignIn() {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -49,134 +62,118 @@ export default function SignIn() {
     setOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
-
-  const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
-    const password = document.getElementById('password') as HTMLInputElement;
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    return isValid;
-  };
-
   return (
-    <div>
+    <Box>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
             component="h1"
             variant="h3"
-            sx={{ width: '100%',textAlign:'center', fontSize: 'clamp(2rem, 10vw, 2.15rem)',fontWeight:'bold' }}
+            sx={{
+              width: "100%",
+              textAlign: "center",
+              fontSize: "clamp(2rem, 10vw, 2.15rem)",
+              fontWeight: "bold",
+            }}
           >
             Sign in
           </Typography>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col w-[100%] gap-7"
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+              remember: false,
+            }}
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+              console.log("Form submitted:", values);
+              // Handle form submission (e.g., API call)
+            }}
           >
-            <FormControl>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                label="Email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControl>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                name="password"
-                placeholder="••••••"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                required
-                fullWidth
-                variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <ForgotPassword open={open} handleClose={handleClose} />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-              sx={{
-                bgcolor:'black',
-              }}
-            >
-              Sign in
-            </Button>
-            <Link
-              component="button"
-              type="button"
-              onClick={handleClickOpen}
-              variant="body2"
-              sx={{ alignSelf: 'center',
-                mt:'10px'
-               }}
-            >
-              Forgot your password?
-            </Link>
-            <Typography sx={{ textAlign: 'center' }}>
-              New here?{' '}
-              <Link
-                href="/pages/signUp"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
-                Sign Up
-              </Link>
-            </Typography>
-          </form>
+            {({ values, handleChange, handleSubmit, errors, touched }) => (
+              <FormContainer component="form" onSubmit={handleSubmit} gap={3}>
+                <FormControl>
+                  <TextField
+                    error={touched.email && Boolean(errors.email)}
+                    helperText={touched.email && errors.email}
+                    id="email"
+                    type="email"
+                    label="Email"
+                    name="email"
+                    placeholder="your@email.com"
+                    autoComplete="email"
+                    autoFocus
+                    required
+                    fullWidth
+                    variant="outlined"
+                    value={values.email}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+                <FormControl>
+                  <TextField
+                    error={touched.password && Boolean(errors.password)}
+                    helperText={touched.password && errors.password}
+                    name="password"
+                    placeholder="••••••"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    required
+                    fullWidth
+                    variant="outlined"
+                    value={values.password}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="remember"
+                      color="primary"
+                      checked={values.remember}
+                      onChange={handleChange}
+                    />
+                  }
+                  label="Remember me"
+                />
+                <ForgotPassword open={open} handleClose={handleClose} />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    bgcolor: "black",
+                  }}
+                >
+                  Sign in
+                </Button>
+                <Link
+                  component="button"
+                  type="button"
+                  onClick={handleClickOpen}
+                  variant="body2"
+                  sx={{ alignSelf: "center", mt: "5px" }}
+                >
+                  Forgot your password ?
+                </Link>
+                <Typography sx={{ textAlign: "center" }}>
+                  New here?{" "}
+                  <Link
+                    href="/pages/signUp"
+                    variant="body2"
+                    sx={{ alignSelf: "center" }}
+                  >
+                    Sign Up
+                  </Link>
+                </Typography>
+              </FormContainer>
+            )}
+          </Formik>
         </Card>
       </SignInContainer>
-    </div>
+    </Box>
   );
 }
