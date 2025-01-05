@@ -15,6 +15,7 @@ import ForgotPassword from "./forgotPassword";
 import { Box } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { border, width } from "@mui/system";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -61,24 +62,28 @@ export default function SignIn() {
   const handleClose = () => {
     setOpen(false);
   };
-
+  const StyledTypograghy = styled(Typography)(({}) => ({
+    width: "100%",
+    textAlign: "center",
+    fontSize: "clamp(2rem, 10vw, 2.15rem)",
+    fontWeight: "bold",
+  }));
+  const StyledButton = styled(Button)(({ theme }) => ({
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    width: "100%",
+    "&:hover": {
+      backgroundColor: theme.palette.common.white,
+      color: theme.palette.common.black,
+      border: "1px solid black",
+    },
+  }));
   return (
     <Box>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
-          <Typography
-            component="h1"
-            variant="h3"
-            sx={{
-              width: "100%",
-              textAlign: "center",
-              fontSize: "clamp(2rem, 10vw, 2.15rem)",
-              fontWeight: "bold",
-            }}
-          >
-            Sign in
-          </Typography>
+          <StyledTypograghy variant="h3">Sign in</StyledTypograghy>
           <Formik
             initialValues={{
               email: "",
@@ -140,16 +145,9 @@ export default function SignIn() {
                   label="Remember me"
                 />
                 <ForgotPassword open={open} handleClose={handleClose} />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "black",
-                  }}
-                >
+                <StyledButton type="submit" variant="outlined">
                   Sign in
-                </Button>
+                </StyledButton>
                 <Link
                   component="button"
                   type="button"

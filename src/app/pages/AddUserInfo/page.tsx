@@ -3,7 +3,8 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import React from "react";
 import Textarea from "@mui/joy/Textarea";
-import * as Yup from "yup"; // Import Yup here
+import * as Yup from "yup";
+import Image from "next/image";
 
 import {
   Box,
@@ -122,9 +123,9 @@ export default function AddUserInfo() {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={(values) => {
-                const accountIndex=accounts.findIndex((account)=>{
+                const accountIndex = accounts.findIndex((account) => {
                   return account.id === values.id;
-                })
+                });
                 if (accountIndex !== -1) {
                   // Update existing account
                   const updatedAccounts = accounts.map((account) =>
@@ -249,11 +250,11 @@ export default function AddUserInfo() {
                             onClick={(e) => editButton(e, account)}
                             sx={{ backgroundColor: "green", height: 30 }}
                           >
-                            <img
-                              src="/edit.png"
-                              alt="Icon"
-                              width={18}
+                            <Image
+                              src={"/edit.png"}
                               height={18}
+                              width={18}
+                              alt="Icon"
                               loading="lazy"
                             />
                           </Button>
@@ -261,7 +262,7 @@ export default function AddUserInfo() {
                             onClick={(e) => deleteButton(e, account)}
                             sx={{ backgroundColor: "red", height: 30 }}
                           >
-                            <img
+                            <Image
                               src="/delete.png"
                               alt="Icon"
                               width={18}

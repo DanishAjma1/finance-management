@@ -21,7 +21,7 @@ export default function Dashboard() {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = ():void => {
+  const handleClose = (): void => {
     setAnchorEl(null);
   };
 
@@ -32,8 +32,11 @@ export default function Dashboard() {
   };
 
   return (
-    <Box >
-      <AppBar position="static" sx={{ backgroundColor: "black",borderRadius:5 }}>
+    <Box>
+      <AppBar
+        position="static"
+        sx={{ backgroundColor: "black", borderRadius: 5 }}
+      >
         <Toolbar>
           <Grid2 sx={{ display: { md: "none" } }}>
             <IconButton
