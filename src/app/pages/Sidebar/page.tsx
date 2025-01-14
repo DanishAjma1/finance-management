@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import DrawerList from "../drawerList/page";
+import DrawerList from "../DrawerList/page";
 import { Box } from "@mui/material";
 import Image from "next/image";
 import { styled } from "@mui/material/styles";
@@ -12,7 +12,7 @@ export default function Sidebar() {
     justifyContent: "center",
     flexDirection: "column",
     alignItems: "center",
-    marginTop: 3,
+    marginTop: 10,
   }));
 
   return (
@@ -26,7 +26,7 @@ export default function Sidebar() {
             alt="nothing"
             className="rounded-[50%]"
           />
-          <Typography sx={{ fontFamily: "sans-serif" }}>
+          <Typography sx={{ fontFamily: "sans-serif"}}>
             Danish Ajmal
           </Typography>
         </StyledGrid>

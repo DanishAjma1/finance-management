@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Dashboard from "./pages/dashboard/page";
-import Sidebar from "./pages/sidebar/page";
+import Dashboard from "./pages/Dashboard/page";
+import Sidebar from "./pages/Sidebar/page";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid2 from "@mui/material/Grid2";
@@ -44,13 +44,13 @@ export default function RootLayout({
               <Grid2
                 sx={{
                   width:'100%',
-                  marginX: { md: 0.5 },
+                  marginX: { md: 1 },
                   borderRadius: "10px",
                   boxShadow: 1,
                   height: "98vh",
                 }}
               >
-                <Grid2 sx={{ marginX: { md: 1 } }}>
+                <Grid2>
                   <Sidebar />
                 </Grid2>
               </Grid2>

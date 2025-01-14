@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
   {
     text: "Add User Information",
     icon: <MailIcon />,
-    path: "/pages/addUserInfo",
+    path: "/pages/AddUserInfo",
   },
   { text: "SignIn", icon: <MailIcon />, path: "/pages/signIn" },
   { text: "SignUp", icon: <InboxIcon />, path: "/pages/signUp" },

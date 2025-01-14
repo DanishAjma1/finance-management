@@ -15,7 +15,7 @@ import ForgotPassword from "./forgotPassword";
 import { Box } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { border, width } from "@mui/system";
+import { NextResponse } from "next/server";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -33,7 +33,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100%",
-  padding: theme.spacing(2),
+  padding: theme.spacing(4),
 }));
 
 const FormContainer = styled(Box)(({}) => ({
@@ -92,9 +92,9 @@ export default function SignIn() {
             }}
             validationSchema={validationSchema}
             onSubmit={(values) => {
-              console.log("Form submitted:", values);
-              // Handle form submission (e.g., API call)
-            }}
+              console.log(values)
+            }
+          }
           >
             {({ values, handleChange, handleSubmit, errors, touched }) => (
               <FormContainer component="form" onSubmit={handleSubmit} gap={3}>

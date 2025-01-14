@@ -10,7 +10,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { Drawer } from "@mui/material";
-import DrawerList from "../drawerList/page";
+import DrawerList from "../DrawerList/page";
 import Grid2 from "@mui/material/Grid2";
 
 export default function Dashboard() {

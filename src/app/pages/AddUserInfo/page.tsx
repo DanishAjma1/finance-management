@@ -5,10 +5,12 @@ import React from "react";
 import Textarea from "@mui/joy/Textarea";
 import * as Yup from "yup";
 import Image from "next/image";
+import CssBaseline from "@mui/material/CssBaseline";
 
 import {
   Box,
   Grid2,
+  Paper,
   styled,
   Table,
   TableBody,
@@ -18,17 +20,30 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Grid } from "@mui/system";
 import { Formik } from "formik";
+import { Done } from "@mui/icons-material";
+import { json } from "stream/consumers";
+import { Account } from "@toolpad/core";
 
 interface Account {
-  id: number;
+  _id: string;
   name: string;
   description: string;
   balance: 0;
 }
-
 export default function AddUserInfo() {
+
+const [open, setOpen] = React.useState<Boolean>(false);
+const handleOpen = () => setOpen(true);
+const handleClose = () => setOpen(false);
+const [accounts, setAccounts] = React.useState<Account[]>([]);
+const [nextId, setNextId] = React.useState(1);
+const [initialValues, setInitialValues] = React.useState<Account>({
+  _id: '0',
+  name: "",
+  description: "",
+  balance: 0,
+});
   const StyledFormContainer = styled(Box)(({}) => ({
     minWidth: 300,
     display: "flex",
@@ -36,7 +51,7 @@ export default function AddUserInfo() {
     alignItems: "center",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
     borderRadius: "12px",
-    padding: "20px",
+    padding: 30,
   }));
 
   const FormContainer = styled(Box)(({}) => ({
@@ -61,16 +76,19 @@ export default function AddUserInfo() {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 30,
   }));
 
-  const TextFieldBox = styled(Grid)(({}) => ({
+  const TextFieldBox = styled(Grid2)(({}) => ({
     flexDirection: "column",
     alignItems: "center",
   }));
   const StyledGrid = styled(Grid2)(({}) => ({
     minWidth: 280,
-    maxHeight: 393,
+    maxHeight: "50vh",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    borderRadius: 5,
+    overflowY: "scroll",
   }));
 
   const StyledBox = styled(Box)(({ theme }) => ({
@@ -82,6 +100,7 @@ export default function AddUserInfo() {
     fontWeight: "bold",
     alignSelf: "center",
     fontSize: "17px",
+    borderRight:'2px solid black',
   }));
 
   const validationSchema = Yup.object().shape({
@@ -94,135 +113,58 @@ export default function AddUserInfo() {
   const editButton = (e: Event, account: Account) => {
     e.preventDefault();
     setInitialValues(account);
-
-    console.log("editing " + account.id + "" + nextId);
   };
-  const deleteButton = (e: Event, account: Account) => {
+  const deleteButton = async(e: Event, account: Account) => {
     e.preventDefault();
-    setAccounts(accounts.filter((acc) => acc.id !== account.id));
+    try{
+      const { _id } = account;
+    const res  = await fetch(`/api/bankAccounts?id=${_id}`,{
+      method: 'DELETE',
+    });
+    if(res.ok)
+    {
+      setAccounts(accounts.filter((acc) => acc._id !== account._id));
+    }
+  }catch(error){
+    alert(error);
+  }
   };
-  const [accounts, setAccounts] = React.useState<Account[]>([]);
-  const [nextId, setNextId] = React.useState(1);
-  const [initialValues, setInitialValues] = React.useState<Account>({
-    id: 0,
-    name: "",
-    description: "",
-    balance: 0,
-  });
+  React.useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const response = await fetch("/api/bankAccounts");
+        if(response.ok)
+        {
+          const {bankAccount} = await response.json();
+          setAccounts(bankAccount);
+        }
+      } catch (error) {
+        console.error("Error fetching accounts:", error);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
   return (
-    <Box sx={{ marginTop: 5 }}>
+    <Box>
+      <CssBaseline enableColorScheme />
       <BoxConatiner>
         <StyledBox
           sx={{
-            width: { md: "90%", xs: "75%", lg: "80%" },
+            width: { md: "95%", xs: "80%", lg: "80%" },
             flexDirection: { md: "row", xs: "column" },
+            justifyContent:'center',
           }}
         >
-          <StyledFormContainer sx={{ width: { md: "50%", xs: "100%" } }}>
-            <Formik
-              initialValues={initialValues}
-              validationSchema={validationSchema}
-              onSubmit={(values) => {
-                const accountIndex = accounts.findIndex((account) => {
-                  return account.id === values.id;
-                });
-                if (accountIndex !== -1) {
-                  // Update existing account
-                  const updatedAccounts = accounts.map((account) =>
-                    account.id === values.id
-                      ? { ...account, ...values }
-                      : account
-                  );
-                  setAccounts(updatedAccounts);
-                } else {
-                  // Add new account
-                  const newAccount = {
-                    id: nextId,
-                    name: values.name,
-                    description: values.description,
-                    balance: values.balance,
-                  };
-                  setAccounts([...accounts, newAccount]);
-                  setNextId(nextId + 1); // Increment the ID for the next account
-                }
-                // Reset form values
-                setInitialValues({
-                  id: 0,
-                  name: "",
-                  description: "",
-                  balance: 0,
-                });
-              }}
-            >
-              {({ values, handleChange, handleSubmit, errors, touched }) => (
-                <FormContainer component="form" onSubmit={handleSubmit}>
-                  <Typography
-                    variant="h5"
-                    sx={{ marginBottom: "30px", fontWeight: "bold" }}
-                  >
-                    Account Details
-                  </Typography>
-                  <TextFieldBox container spacing={3}>
-                    <TextField
-                      id="id"
-                      name="id"
-                      value={values.id}
-                      sx={{ display: "none" }}
-                    />
-                    <TextField
-                      id="name"
-                      label="Name"
-                      variant="outlined"
-                      value={values.name}
-                      autoFocus
-                      onChange={handleChange}
-                      error={touched.name && Boolean(errors.name)}
-                      helperText={touched.name && errors.name}
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      id="balance"
-                      label="Amount"
-                      variant="outlined"
-                      type="number"
-                      value={values.balance}
-                      onChange={handleChange}
-                      error={touched.balance && Boolean(errors.balance)}
-                      helperText={touched.balance && errors.balance}
-                      fullWidth
-                      required
-                    />
-                    <Textarea
-                      size="lg"
-                      name="description"
-                      placeholder="Description…"
-                      minRows={2}
-                      variant="outlined"
-                      value={values.description}
-                      onChange={handleChange}
-                      sx={{ width: "100%", backgroundColor: "transparent" }}
-                      error={touched.description && Boolean(errors.description)}
-                      required
-                    />
-                  </TextFieldBox>
-                  <StyledButton variant="contained" type="submit">
-                    Add Account
-                  </StyledButton>
-                </FormContainer>
-              )}
-            </Formik>
-          </StyledFormContainer>
           <StyledGrid
             sx={{
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-              width: { md: "70%", xs: "75%", lg: "50%" },
+              width: '80%',
             }}
           >
-            <TableContainer>
-              <Table aria-label="simple table">
+            <TableContainer component={Paper}>
+              <Table>
                 <TableHead sx={{ fontFamily: "monospace" }}>
-                  <TableRow sx={{ borderBlock: 2 }}>
+                  <TableRow sx={{ borderBottom:'2px solid black' }}>
                     <StyledTableCell>Name</StyledTableCell>
                     <StyledTableCell>Balance</StyledTableCell>
                     <StyledTableCell>Description</StyledTableCell>
@@ -230,9 +172,9 @@ export default function AddUserInfo() {
                   </TableRow>
                 </TableHead>
 
-                <TableBody>
-                  {accounts.map((account, index) => (
-                    <TableRow key={index}>
+                <TableBody sx={{wordWrap:'break-word'}}>
+                  {accounts.map((account) => (
+                    <TableRow key={account._id}>
                       <TableCell>{account.name}</TableCell>
                       <TableCell>{account.balance}</TableCell>
                       <TableCell>{account.description}</TableCell>

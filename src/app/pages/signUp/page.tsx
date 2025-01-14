@@ -32,7 +32,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   borderRadius: "10px",
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const SignUpContainer = styled(Stack)(({ theme }) => ({
   // minHeight: "70%",
   padding: theme.spacing(4),
   flexDirection: "column",
@@ -61,7 +61,7 @@ export default function SignUp() {
   return (
     <Grid2>
       <CssBaseline enableColorScheme />
-      <SignInContainer>
+      <SignUpContainer>
         <Card variant="outlined">
           <Typography
             component="h1"
@@ -83,8 +83,22 @@ export default function SignUp() {
               remember: false,
             }}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
-              console.log("Form submitted:", values);
+            onSubmit={async (values) => {
+
+              const response = await fetch("/api/users", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ data: values }),
+              });
+            
+              if (response.ok) {
+                window.location.href = "/";
+              } else {
+                const errorData = await response.json();
+                alert("Something went wrong!");
+              }
             }}
           >
             {({ values, handleChange, handleSubmit, errors, touched }) => (
@@ -172,7 +186,7 @@ export default function SignUp() {
             )}
           </Formik>
         </Card>
-      </SignInContainer>
+      </SignUpContainer>
     </Grid2>
   );
 }
