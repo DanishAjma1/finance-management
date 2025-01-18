@@ -1,16 +1,21 @@
-import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
 import connectMongoDB from "../../lib/mongoDb";
 import bankAccounts from "../../models/bankAccounts";
-import { stat } from "fs";
+import { ObjectId } from "mongodb";
+
+
 
 export async function POST(req) {
   try {
-    const body = await req.json();
+    const { name, description, balance } = await req.json();
     await connectMongoDB();
-    await bankAccounts.create(body);
+    const saveAccount = await bankAccounts.create({
+      name,
+      description,
+      balance,
+    });
     return new Response(
-      JSON.stringify({ message: "Data added successfully.." }),
+      JSON.stringify({ saveAccount }, { message: "Data added successfully.." }),
       { status: 201 }
     );
   } catch (error) {
@@ -27,32 +32,49 @@ export async function GET() {
     return new Response(error.message, { status: 500 });
   }
 }
-
-export async function PUT(req,params ) {
+export async function PUT(req) {
   try {
-    const  body  = await req.json();
-    const  id  = params;
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return new Response(JSON.stringify({ message: "ID is required" }), {
+        status: 400,
+      });
+    }
+
+    const body = await req.json();
+
     await connectMongoDB();
-    await bankAccounts.updateOne({id},{$set: body });
-    return new Response(JSON.stringify({message:"Updated successfully"}), {
+    const res = await bankAccounts.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: body }
+    );
+    return new Response(JSON.stringify({ message: "Updated successfully" }), {
       status: 200,
     });
   } catch (error) {
     return new Response({ message: "something went wrong.." }, { status: 500 });
   }
 }
-
-export async function DELETE({ params }) {
+export async function DELETE(req) {
   try {
-    const id = params;
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return new Response(JSON.stringify({ message: "ID is required" }), {
+        status: 400,
+      });
+    }
     await connectMongoDB();
-    await bankAccounts.deleteOne(id);
-    return NextResponse.json(
-      { message: "Account deleted successfully" },
-      { status: 200 }
-    );
+    await bankAccounts.deleteOne({ _id: new ObjectId(id) });
+
+    return new Response(JSON.stringify({ message: "Account deleted successfully" }), {
+      status: 200,
+    });
   } catch (error) {
-    return new Response(JSON.stringify({ message: "something went wrong.." }), {
+    console.error("Error during deletion:", error);
+    return new Response(JSON.stringify({ message: "Something went wrong" }), {
       status: 500,
     });
   }

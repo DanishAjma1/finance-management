@@ -14,6 +14,7 @@ import { styled } from "@mui/material/styles";
 import { Grid2 } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import SignIn from "../signIn/page";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -94,9 +95,8 @@ export default function SignUp() {
               });
             
               if (response.ok) {
-                window.location.href = "/";
+                <SignIn/>
               } else {
-                const errorData = await response.json();
                 alert("Something went wrong!");
               }
             }}
