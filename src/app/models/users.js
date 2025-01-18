@@ -4,7 +4,6 @@ const usersSchema = new Schema(
   {
     email: String,
     password: String,
-    confirmPassword: String,
   },
   { timestamps: true }
 );

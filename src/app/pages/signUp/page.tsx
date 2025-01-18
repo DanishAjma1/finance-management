@@ -14,7 +14,7 @@ import { styled } from "@mui/material/styles";
 import { Grid2 } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import SignIn from "../signIn/page";
+import { useRouter } from "next/navigation";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -25,7 +25,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
   gap: theme.spacing(3),
   justifyContent: "center",
   textAlign: "center",
-
   margin: "auto",
   [theme.breakpoints.up("sm")]: {
     maxWidth: "450px",
@@ -34,7 +33,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignUpContainer = styled(Stack)(({ theme }) => ({
-  // minHeight: "70%",
   padding: theme.spacing(4),
   flexDirection: "column",
   justifyContent: "space-between",
@@ -46,12 +44,17 @@ const FormContainer = styled(Box)(({}) => ({
   width: "90%",
   alignSelf: "center",
 }));
+
 const validationSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .matches(/[\W_]/, "Password must contain at least one special character")
     .required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
@@ -59,6 +62,15 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function SignUp() {
+  const router = useRouter();
+    React.useEffect(() => {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("auth_token="));
+      if (token) {
+        router.push("/");
+      }
+    }, []);
   return (
     <Grid2>
       <CssBaseline enableColorScheme />
@@ -85,17 +97,19 @@ export default function SignUp() {
             }}
             validationSchema={validationSchema}
             onSubmit={async (values) => {
-
-              const response = await fetch("/api/users", {
+              const response = await fetch("/api/auth/signUp", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ data: values }),
+                body: JSON.stringify({
+                  email: values.email,
+                  password: values.password,
+                 }),
               });
-            
+
               if (response.ok) {
-                <SignIn/>
+                window.location.href = "/pages/signIn"; // Redirect to sign-in page
               } else {
                 alert("Something went wrong!");
               }
@@ -111,8 +125,7 @@ export default function SignUp() {
                   type="email"
                   name="email"
                   placeholder="your@email.com"
-                  autoComplete="email"
-                  autoFocus
+                  // autoFocus
                   required
                   fullWidth
                   variant="outlined"
@@ -127,7 +140,6 @@ export default function SignUp() {
                   type="password"
                   name="password"
                   placeholder="••••••"
-                  autoComplete="current-password"
                   required
                   fullWidth
                   variant="outlined"
@@ -135,16 +147,13 @@ export default function SignUp() {
                   onChange={handleChange}
                 />
                 <TextField
-                  error={
-                    touched.confirmPassword && Boolean(errors.confirmPassword)
-                  }
+                  error={touched.confirmPassword && Boolean(errors.confirmPassword)}
                   helperText={touched.confirmPassword && errors.confirmPassword}
                   id="confirmPassword"
                   label="Confirm Password"
                   type="password"
                   name="confirmPassword"
                   placeholder="••••••"
-                  autoComplete="confirm-password"
                   required
                   fullWidth
                   variant="outlined"
@@ -175,7 +184,7 @@ export default function SignUp() {
                 <Typography sx={{ textAlign: "center" }}>
                   Already have an account?{" "}
                   <Link
-                    href="/pages/signIn"
+                    href="/signIn"
                     variant="body2"
                     sx={{ alignSelf: "center" }}
                   >

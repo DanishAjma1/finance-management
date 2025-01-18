@@ -15,7 +15,7 @@ import ForgotPassword from "./forgotPassword";
 import { Box } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { NextResponse } from "next/server";
+import { useRouter } from "next/navigation";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -78,6 +78,16 @@ export default function SignIn() {
       border: "1px solid black",
     },
   }));
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("auth_token="));
+    if (token) {
+      router.push("/");
+    }
+  }, []);
   return (
     <Box>
       <CssBaseline enableColorScheme />
@@ -91,10 +101,18 @@ export default function SignIn() {
               remember: false,
             }}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
-              console.log(values)
-            }
-          }
+            onSubmit={async (values) => {
+              const res = await fetch("/api/auth/signIn", {
+                method: "POST",
+                body: JSON.stringify({
+                  email: values.email,
+                  password: values.password,
+                }),
+              });
+              if (res.ok) {
+                window.location.href = "/";
+              }
+            }}
           >
             {({ values, handleChange, handleSubmit, errors, touched }) => (
               <FormContainer component="form" onSubmit={handleSubmit} gap={3}>
@@ -108,7 +126,7 @@ export default function SignIn() {
                     name="email"
                     placeholder="your@email.com"
                     autoComplete="email"
-                    autoFocus
+                    // autoFocus
                     required
                     fullWidth
                     variant="outlined"
