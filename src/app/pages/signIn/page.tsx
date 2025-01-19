@@ -42,7 +42,7 @@ const FormContainer = styled(Box)(({}) => ({
   width: "90%",
   alignSelf: "center",
 }));
-// Validation schema using Yup
+
 const validationSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email address")
@@ -110,7 +110,7 @@ export default function SignIn() {
                 }),
               });
               if (res.ok) {
-                window.location.href = "/";
+                router.push("/");
               }
             }}
           >

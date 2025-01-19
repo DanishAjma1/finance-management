@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 
-export default function handler(req, res) {
+export default function handler(res) {
   res.setHeader('Set-Cookie', cookie.serialize('auth_token', '', {
     // httpOnly: true,
     secure: false,
@@ -8,5 +8,7 @@ export default function handler(req, res) {
     path: '/pages/signIn',
   }));
 
-  return res.status(200).json({ message: 'Logged out successfully' });
+  return new Response({ message: 'Logged out successfully' },{
+    status:200
+  });
 }

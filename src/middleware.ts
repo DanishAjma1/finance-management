@@ -12,10 +12,5 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 export const config = {
-  matcher: [
-    "/pages/AddUserInfo", // Protects /AddUserInfo and its subroutes
-    "/",
-    "/pages/signUp",
-
-  ],
+  matcher: ["/pages/AddUserInfo", "/", "/pages/signUp"],
 };

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Dashboard from "./pages/Dashboard/page";
-import Sidebar from "./pages/Sidebar/page";
+import Sidebar from "./pages/Dashboard/Sidebar/page";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid2 from "@mui/material/Grid2";

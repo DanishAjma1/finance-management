@@ -162,7 +162,10 @@ export default function AddUserInfo() {
 
   const fetchAccounts = async () => {
     try {
-      const response = await fetch("/api/bankAccounts");
+      const response = await fetch("/api/bankAccounts",{
+        method:'GET',
+        credentials: "include",
+      });
       if (response.ok) {
         const { bankAccount } = await response.json();
         setAccounts(bankAccount);

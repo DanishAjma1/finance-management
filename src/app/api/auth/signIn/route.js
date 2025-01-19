@@ -26,7 +26,7 @@ export async function POST(req) {
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
       {
-        expiresIn: "2m",
+        expiresIn: "5m",
       }
     );
 
@@ -34,7 +34,7 @@ export async function POST(req) {
       // httpOnly: true,
       secure: false,
       sameSite: "strict",
-      maxAge: 120,
+      maxAge: 300,
       path: "/",
     });
 
