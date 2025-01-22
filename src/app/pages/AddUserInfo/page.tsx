@@ -12,6 +12,9 @@ import Fade from "@mui/material/Fade";
 
 import {
   Box,
+  Card,
+  CardContent,
+  Chip,
   Grid2,
   Paper,
   styled,
@@ -24,16 +27,18 @@ import {
   Typography,
 } from "@mui/material";
 import { Formik } from "formik";
-import { Done } from "@mui/icons-material";
+import { Add, Done } from "@mui/icons-material";
 import { json } from "stream/consumers";
 import { Account } from "@toolpad/core";
 import { features } from "process";
+import { toast } from "react-toastify";
 
 interface Account {
   _id: string;
   name: string;
   description: string;
   balance: 0;
+  acc_num: 0;
 }
 export default function AddUserInfo() {
   const [openModal, setOpenModal] = React.useState(false);
@@ -48,6 +53,7 @@ export default function AddUserInfo() {
     _id: "0",
     name: "",
     description: "",
+    acc_num: 0,
     balance: 0,
   });
   const StyledFormContainer = styled(Box)(({}) => ({
@@ -109,7 +115,7 @@ export default function AddUserInfo() {
   const StyledBox = styled(Box)(({ theme }) => ({
     gap: theme.spacing(2),
     display: "flex",
-    alignItems: "center",
+    // alignItems: "center",
   }));
   const StyledTableCell = styled(TableCell)(({}) => ({
     fontWeight: "bold",
@@ -137,11 +143,19 @@ export default function AddUserInfo() {
     balance: Yup.number()
       .required("Amount is required")
       .positive("Amount must be positive"),
+    acc_num: Yup.string()
+      .matches(/^\d{16}$/, "Account number must be 16 digits")
+      .required("Account number is required."),
   });
-  const editButton = (e: Event, account: Account) => {
-    e.preventDefault();
+  const editButton = (account: Account) => {
     handleOpenModal();
     setInitialValues(account);
+  };
+  const calculatePercentageChange = (currentBalance, previousBalance) => {
+    if (previousBalance === null || previousBalance === 0) {
+      return 0;
+    }
+    return ((currentBalance - previousBalance) / previousBalance) * 100;
   };
   const deleteButton = async (e: Event, account: Account) => {
     e.preventDefault();
@@ -162,8 +176,8 @@ export default function AddUserInfo() {
 
   const fetchAccounts = async () => {
     try {
-      const response = await fetch("/api/bankAccounts",{
-        method:'GET',
+      const response = await fetch("/api/bankAccounts", {
+        method: "GET",
         credentials: "include",
       });
       if (response.ok) {
@@ -183,75 +197,134 @@ export default function AddUserInfo() {
       <BoxConatiner>
         <StyledBox
           sx={{
-            width: { md: "95%", xs: "80%", lg: "80%" },
-            flexDirection: { md: "", xs: "column" },
-            justifyContent: "center",
+            width: { xs: "95%" },
+            flexDirection: { xs: "column" },
           }}
         >
-          <Grid2 sx={{ width: "80%" }}>
-            <StyledButton sx={{ alignSelf: "start" }} onClick={handleOpen}>
-              Create Account
-            </StyledButton>
-            <StyledGrid>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead sx={{ fontFamily: "monospace" }}>
-                    <TableRow sx={{ borderBottom: "2px solid black" }}>
-                      <StyledTableCell>Name</StyledTableCell>
-                      <StyledTableCell>Balance</StyledTableCell>
-                      <StyledTableCell>Description</StyledTableCell>
-                      <StyledTableCell>Actions</StyledTableCell>
-                    </TableRow>
-                  </TableHead>
+          <StyledButton
+            sx={{ alignSelf: "end", padding: "8px 20px" }}
+            onClick={handleOpen}
+            startIcon={<Add />}
+          >
+            Create Account
+          </StyledButton>
+          <Grid2 container spacing={3}>
+            {accounts.map((account, index) => {
+              const previousBalance =
+                index > 0 ? accounts[index - 1].balance : null;
+              const percentageChange = calculatePercentageChange(
+                account.balance,
+                previousBalance
+              );
 
-                  <TableBody sx={{ wordWrap: "break-word" }}>
-                    {accounts.map((account) => (
-                      <TableRow key={account._id}>
-                        <TableCell>{account.name}</TableCell>
-                        <TableCell>{account.balance}</TableCell>
-                        <TableCell>{account.description}</TableCell>
-                        <TableCell>
-                          <Grid2
-                            container
-                            spacing={1}
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              width: "100%",
-                            }}
-                          >
-                            <Button
-                              onClick={(e) => editButton(e, account)}
-                              sx={{ backgroundColor: "green", height: 30 }}
-                            >
-                              <Image
-                                src={"/edit.png"}
-                                height={18}
-                                width={18}
-                                alt="Icon"
-                                loading="lazy"
-                              />
-                            </Button>
-                            <Button
-                              onClick={(e) => deleteButton(e, account)}
-                              sx={{ backgroundColor: "red", height: 30 }}
-                            >
-                              <Image
-                                src="/delete.png"
-                                alt="Icon"
-                                width={18}
-                                height={18}
-                                loading="lazy"
-                              />
-                            </Button>
-                          </Grid2>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </StyledGrid>
+              return (
+                <Grid2 size={{ xs: 12, md: 6, lg: 4 }} key={account._id}>
+                  <Card
+                    sx={{
+                      background: "linear-gradient(135deg, #2e2e2e, #1c1c1c)",
+                      color: "#fff",
+                      boxShadow: 5,
+                      borderRadius: 4,
+                      transition:
+                        "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+                      "&:hover": { transform: "scale(1.05)", boxShadow: 10 },
+                    }}
+                  >
+                    <CardContent>
+                      <Grid2
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          gutterBottom
+                          sx={{ fontWeight: 500, fontSize: "1.1rem" }}
+                        >
+                          {account.name}
+                        </Typography>
+                        <Chip
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            const res = await fetch(
+                              `/api/cards?id=${account._id}`,
+                              {
+                                method: "DELETE",
+                              }
+                            );
+                            if (res.ok) {
+                              toast.success("Card Deleted Successfully..");
+                              const updatedAccounts = accounts.filter(
+                                (acc) => acc._id !== account._id
+                              );
+                              setAccounts(updatedAccounts);
+                            }
+                          }}
+                          label={
+                            <Image
+                              src={"/delete.png"}
+                              alt="Icon"
+                              width={10}
+                              height={10}
+                            />
+                          }
+                          color="error"
+                          sx={{ alignSelf: "center" }}
+                        />
+                      </Grid2>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", mb: 2 }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{ mr: 1, color: "#bdbdbd" }}
+                        >
+                          {account.acc_num}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "#bdbdbd" }}>
+                          {account.description}
+                        </Typography>
+                      </Box>
+                      <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
+                        {"$" + account.balance.toLocaleString()}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          display: "inline-block",
+                          backgroundColor: "#3f51b5",
+                          color: "#fff",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {percentageChange.toFixed(2)}% From Previous Period ↑
+                      </Typography>
+                    </CardContent>
+                    <Box sx={{ textAlign: "center", p: 2 }}>
+                      <Button
+                        onClick={() => editButton(account)}
+                        variant="outlined"
+                        sx={{
+                          color: "#fff",
+                          borderColor: "#fff",
+                          textTransform: "none",
+                          borderRadius: 20,
+                          padding: "6px 20px",
+                          "&:hover": { backgroundColor: "#333" },
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </Box>
+                  </Card>
+                </Grid2>
+              );
+            })}
           </Grid2>
         </StyledBox>
       </BoxConatiner>
@@ -291,6 +364,7 @@ export default function AddUserInfo() {
                           name: values.name,
                           description: values.description,
                           balance: values.balance,
+                          acc_num: values.acc_num,
                         }),
                       }
                     );
@@ -304,11 +378,11 @@ export default function AddUserInfo() {
                       setAccounts(updatedAccounts);
                     }
                   } else {
-                    // Add new account
                     const newAccount = {
                       _id: values._id,
                       name: values.name,
                       description: values.description,
+                      acc_num: values.acc_num,
                       balance: values.balance,
                     };
                     const response = await fetch("/api/bankAccounts", {
@@ -323,11 +397,11 @@ export default function AddUserInfo() {
                       fetchAccounts();
                     }
                   }
-                  // Reset form values
                   setInitialValues({
                     _id: "0",
                     name: "",
                     description: "",
+                    acc_num: 0,
                     balance: 0,
                   });
                 }}
@@ -350,6 +424,7 @@ export default function AddUserInfo() {
                       <TextField
                         id="name"
                         label="Name"
+                        name="name"
                         variant="outlined"
                         value={values.name}
                         autoFocus
@@ -360,6 +435,7 @@ export default function AddUserInfo() {
                         required
                       />
                       <TextField
+                        name="balance"
                         id="balance"
                         label="Amount"
                         variant="outlined"
@@ -368,6 +444,19 @@ export default function AddUserInfo() {
                         onChange={handleChange}
                         error={touched.balance && Boolean(errors.balance)}
                         helperText={touched.balance && errors.balance}
+                        fullWidth
+                        required
+                      />
+                      <TextField
+                        name="acc_num"
+                        id="acc_num"
+                        label="Account Number"
+                        variant="outlined"
+                        type="text"
+                        value={values.acc_num}
+                        onChange={handleChange}
+                        error={touched.acc_num && Boolean(errors.acc_num)}
+                        helperText={touched.acc_num && errors.acc_num}
                         fullWidth
                         required
                       />

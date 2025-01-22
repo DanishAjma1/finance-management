@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 export async function POST(req) {
   try {
-    const { name, description, balance } = await req.json();
+    const { name, description, balance,acc_num } = await req.json();
 
     await connectMongoDB();
     const userId = getUserID(req);
@@ -14,6 +14,7 @@ export async function POST(req) {
       name,
       description,
       balance,
+      acc_num,
       user_id: userId,
     });
     return new Response(JSON.stringify({ saveAccount }), { status: 201 });

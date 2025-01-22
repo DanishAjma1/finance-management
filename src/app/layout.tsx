@@ -6,6 +6,7 @@ import Sidebar from "./pages/Dashboard/Sidebar/page";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid2 from "@mui/material/Grid2";
+import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ToastContainer/>
         <Box sx={{ flexGrow: 1, margin: 0.5 }}>
           <Grid2 container sx={{ display: "flex", flexWrap: "nowrap" }}>
             <Grid2

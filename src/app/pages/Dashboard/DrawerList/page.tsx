@@ -19,6 +19,31 @@ type NavItem = {
 const navItems: NavItem[] = [
   { text: "Home", icon: <InboxIcon />, path: "/" },
   {
+    text: "Analytics",
+    icon: <MailIcon />,
+    path: "/pages/Analytics",
+  },
+  {
+    text: "Transactions",
+    icon: <MailIcon />,
+    path: "/pages/Transactions",
+  },
+  {
+    text: "Accounts",
+    icon: <MailIcon />,
+    path: "/pages/Accounts",
+  },
+  {
+    text: "Card",
+    icon: <MailIcon />,
+    path: "/pages/Card",
+  },
+  {
+    text: "About Us",
+    icon: <MailIcon />,
+    path: "/pages/AboutUs",
+  },
+  {
     text: "Add User Information",
     icon: <MailIcon />,
     path: "/pages/AddUserInfo",
