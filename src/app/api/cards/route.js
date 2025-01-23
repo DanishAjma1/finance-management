@@ -4,7 +4,6 @@ import Card from "../../models/cards";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 
-
 const getUserID = (req) => {
   const cookies = req.headers.get("cookie");
   if (!cookies) {
@@ -69,27 +68,32 @@ export async function PUT(req) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     if (!id) {
-      return new Response(JSON.stringify({ message: "Id not found" }), { status: 400 });
+      return new Response(JSON.stringify({ message: "Id not found" }), {
+        status: 400,
+      });
     }
     const body = req.json();
     await connectMongoDB();
 
     const res = await Card.updateOne({ _id: new Object(id) }, { $set: body });
-    return new Response(JSON.stringify({ message: "Updated Successfully.." }), { status: 200 });
+    return new Response(JSON.stringify({ message: "Updated Successfully.." }), {
+      status: 200,
+    });
   } catch (error) {
     return new Response(error.message, { status: 500 });
   }
 }
 
 export async function DELETE(req) {
-  try{
-  const {searchParams} = new URL(req.url);
-  const id = searchParams.get("id");
-  await connectMongoDB();
-  await Card.deleteOne({ _id: new ObjectId(id) });
-  return new Response(JSON.stringify({message: "Card Deleted.."}),{status:200})
-  }
-  catch(error){
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    await connectMongoDB();
+    await Card.deleteOne({ _id: new ObjectId(id) });
+    return new Response(JSON.stringify({ message: "Card Deleted.." }), {
+      status: 200,
+    });
+  } catch (error) {
     return new Response(JSON.stringify({ message: "Something went wrong" }), {
       status: 500,
     });

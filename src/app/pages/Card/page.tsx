@@ -89,6 +89,7 @@ export default function CardManagement() {
       },
     });
     if (res.ok) {
+      toast.success("Card Added Successfully..");
       const updatedCards = [...cards, newCard];
       setCards(updatedCards);
       resetForm();
@@ -228,7 +229,7 @@ export default function CardManagement() {
                         method: "DELETE",
                       });
                       if (res.ok) {
-                        toast.success("Card Deleted Successfully..");
+                        toast.done("Card Deleted Successfully..");
                         const updatedCards = cards.filter(
                           (c) => c._id !== card._id
                         );
@@ -344,8 +345,8 @@ export default function CardManagement() {
             name: "",
             number: "",
             expiry: "",
-            cvv: null,
-            pin: null,
+            cvv: "",
+            pin: "",
             limit: 0,
           }}
           validationSchema={CardSchema}

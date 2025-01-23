@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Bar } from "react-chartjs-2";
-import { Box, Typography, Paper, Grid } from "@mui/material";
+import { Box, Typography, Paper, Grid, Grid2 } from "@mui/material";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,7 +24,7 @@ const BarChart = () => {
         label: "Sales ($)",
         data: [1200, 1900, 3000, 5000, 2400, 3200, 4000, 2800, 3300, 3500, 4200, 4600],
         backgroundColor: "linear-gradient(90deg, rgba(63, 81, 181, 0.6), rgba(33, 150, 243, 0.6))", // Gradient effect
-        borderColor: "rgba(63, 81, 181, 1)",
+        borderColor: "rgb(75, 0, 44)",
         borderWidth: 1,
       },
     ],
@@ -43,7 +43,7 @@ const BarChart = () => {
         title: {
           display: true,
           text: "Month",
-          color: "#3F51B5",
+          color: "rgb(0, 38, 51)",
           font: {
             weight: "bold",
           },
@@ -54,7 +54,7 @@ const BarChart = () => {
         title: {
           display: true,
           text: "Sales ($)",
-          color: "#3F51B5",
+          color: "rgb(0, 27, 36)",
           font: {
             weight: "bold",
           },
@@ -69,7 +69,7 @@ const BarChart = () => {
       title: {
         display: true,
         text: "Monthly Sales Analytics",
-        color: "#3F51B5",
+        color: "rgb(22, 0, 79)",
         font: {
           weight: "bold",
         },
@@ -90,19 +90,18 @@ const BarChart = () => {
       <Typography
         variant="h6"
         gutterBottom
-        align="center"
+        align="left"
         sx={{
           fontWeight: "bold",
-          color: "#3F51B5",
+          color: "rgb(0, 26, 42)",
           textTransform: "uppercase",
-          letterSpacing: 1.2,
+          letterSpacing: 1,
         }}
       >
         Analytics Overview
       </Typography>
-      <Grid container spacing={3}>
-        {/* Bar Chart Section */}
-        <Grid item xs={12} md={8}>
+      <Grid2 container spacing={3}>
+        <Grid2 size={{ sm: 12, md: 6,lg:8 }}>
           <Box
             sx={{
               position: "relative",
@@ -116,17 +115,17 @@ const BarChart = () => {
           >
             <Bar data={data} options={options} />
           </Box>
-        </Grid>
+        </Grid2>
 
         {/* Analytics Information Section */}
-        <Grid item xs={12} md={4}>
+        <Grid2 size={{sm:12 , md:6, lg:4 }}>
           <Typography
             variant="h6"
             gutterBottom
             sx={{
               fontWeight: "bold",
               textAlign: "center",
-              color: "#3F51B5",
+              color: "rgb(0, 8, 32)",
               textTransform: "uppercase",
               marginBottom: 3,
             }}
@@ -140,21 +139,21 @@ const BarChart = () => {
                   variant="subtitle1"
                   sx={{
                     fontWeight: "bold",
-                    color: "rgba(63, 81, 181, 1)",
+                    color: "rgb(120, 0, 70)",
                     transition: "color 0.3s ease",
                     "&:hover": { color: "#1976D2" }, // Hover effect for interactivity
                   }}
                 >
                   {insight.title}
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#616161" }}>
+                <Typography variant="body2" sx={{ color: "rgb(48, 50, 0)" }}>
                   {insight.detail}
                 </Typography>
               </Box>
             ))}
           </Box>
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </Paper>
   );
 };

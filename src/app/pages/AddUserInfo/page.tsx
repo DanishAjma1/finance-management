@@ -104,24 +104,11 @@ export default function AddUserInfo() {
     flexDirection: "column",
     alignItems: "center",
   }));
-  const StyledGrid = styled(Grid2)(({}) => ({
-    minWidth: 280,
-    maxHeight: "50vh",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-    borderRadius: 5,
-    overflowY: "scroll",
-  }));
 
   const StyledBox = styled(Box)(({ theme }) => ({
     gap: theme.spacing(2),
     display: "flex",
     // alignItems: "center",
-  }));
-  const StyledTableCell = styled(TableCell)(({}) => ({
-    fontWeight: "bold",
-    alignSelf: "center",
-    fontSize: "17px",
-    borderRight: "2px solid black",
   }));
 
   const StyledModalBox = styled(Box)(({ theme }) => ({
@@ -156,22 +143,6 @@ export default function AddUserInfo() {
       return 0;
     }
     return ((currentBalance - previousBalance) / previousBalance) * 100;
-  };
-  const deleteButton = async (e: Event, account: Account) => {
-    e.preventDefault();
-    if (window.confirm("Are you sure you want to delete this account?")) {
-      try {
-        const { _id } = account;
-        const res = await fetch(`/api/bankAccounts?id=${_id}`, {
-          method: "DELETE",
-        });
-        if (res.ok) {
-          setAccounts(accounts.filter((acc) => acc._id !== account._id));
-        }
-      } catch (error) {
-        alert(error);
-      }
-    }
   };
 
   const fetchAccounts = async () => {
@@ -248,18 +219,24 @@ export default function AddUserInfo() {
                         <Chip
                           onClick={async (e) => {
                             e.preventDefault();
-                            const res = await fetch(
-                              `/api/cards?id=${account._id}`,
-                              {
-                                method: "DELETE",
-                              }
-                            );
-                            if (res.ok) {
-                              toast.success("Card Deleted Successfully..");
-                              const updatedAccounts = accounts.filter(
-                                (acc) => acc._id !== account._id
+                            if (
+                              window.confirm(
+                                "Are you sure you want to delete this account?"
+                              )
+                            ) {
+                              const res = await fetch(
+                                `/api/bankAccounts?id=${account._id}`,
+                                {
+                                  method: "DELETE",
+                                }
                               );
-                              setAccounts(updatedAccounts);
+                              if (res.ok) {
+                                toast.done("Account Deleted Successfully..");
+                                const updatedAccounts = accounts.filter(
+                                  (acc) => acc._id !== account._id
+                                );
+                                setAccounts(updatedAccounts);
+                              }
                             }
                           }}
                           label={
@@ -370,6 +347,7 @@ export default function AddUserInfo() {
                     );
                     if (res.ok) {
                       handleCloseModal();
+                      toast.info("Account Updated successfully.");
                       const updatedAccounts = accounts.map((account) =>
                         account._id === values._id
                           ? { ...account, ...values }

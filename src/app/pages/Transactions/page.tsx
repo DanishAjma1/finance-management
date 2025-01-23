@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Card,
-  TextField,
   Table,
   TableBody,
   TableCell,
@@ -12,39 +11,104 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Grid,
+  TextField,
+  MenuItem,
+  styled,
+  Grid2,
 } from "@mui/material";
+import { Form, Formik } from "formik";
+import * as Yup from "yup";
+import Image from "next/image";
+import { toast } from "react-toastify";
 
 const TransactionPage = () => {
-  const [transactions, setTransactions] = useState([]);
-  const [formData, setFormData] = useState({
+  const [transactions, setTransactions] = React.useState([]);
+  const [accounts, setAccounts] = React.useState([]);
+
+  const validationSchema = Yup.object({
+    description: Yup.string().required("Description is required"),
+    amount: Yup.number()
+      .required("Amount is required")
+      .positive("Amount must be positive"),
+    acc_num: Yup.string()
+      .required("Account Number is required")
+      .matches(/^[0-9]{16}$/, "Account Number must be 16 digit"),
+  });
+
+  const StyledCell = styled(TableCell)(({ theme }) => ({
+    backgroundColor: "black",
+    color: "white",
+    fontSize: "medium",
+    fontWeight: "lighter",
+  }));
+  const deleteButton = async (tran) =>{
+    try {
+      const response = await fetch(`/api/transactions?id=${tran._id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        const updatedTransactions =
+          transactions.filter((transaction) => transaction._id !== tran._id )
+          setTransactions(updatedTransactions);
+          toast.info("Transaction deleted successfully..");
+      }
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
+  };
+
+  const fetchAccounts = async () => {
+    try {
+      const response = await fetch("/api/bankAccounts", {
+        method: "GET",
+      });
+      const response2 = await fetch("/api/transactions", {
+        method: "GET",
+      });
+      if (response.ok && response2.ok) {
+        const { bankAccount } = await response.json();
+        setAccounts(bankAccount);
+        const {transaction} = await response2.json();
+        setTransactions(transaction);
+      }
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const initialValues = {
     description: "",
     amount: "",
     date: "",
-    accountNumber: "",
-    cvv: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    acc_num: "",
   };
 
-  const handleAddTransaction = () => {
-    const { description, amount, date, accountNumber, cvv } = formData;
-
-    // Basic validation
-    if (description && amount && date && accountNumber && cvv) {
-      setTransactions((prev) => [...prev, formData]);
-      setFormData({
-        description: "",
-        amount: "",
-        date: "",
-        accountNumber: "",
-        cvv: "",
-      }); // Reset form
-    } else {
-      alert("Please fill out all fields!");
+  const handleSubmit = async (values, { resetForm }) => {
+    if (!values.date) {
+      values.date = new Date(Date.now()).toISOString().split("T")[0];
+    }
+    const response = await fetch("/api/transactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+    const respons = await fetch("/api/bankAccounts", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ acc_num: values.acc_num, amount: values.amount }),
+    });
+    if (response.ok && respons.ok) {
+      toast.success("Transaction Successful..");
+      fetchAccounts();
+      resetForm();
     }
   };
 
@@ -54,98 +118,102 @@ const TransactionPage = () => {
         Transaction Page
       </Typography>
 
-      {/* Form Section */}
       <Card sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          Add Transaction
+        <Typography variant="h6" sx={{ mb: 3, fontWeight: "lighter" }}>
+          Add Transaction..
         </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Amount"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              type="number"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Account Number"
-              name="accountNumber"
-              value={formData.accountNumber}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              type="number"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="CVV"
-              name="cvv"
-              value={formData.cvv}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              type="password"
-              inputProps={{ maxLength: 3 }}
-            />
-          </Grid>
-          <Grid item xs={12} sx={{ textAlign: "right" }}>
-  <Button
-    variant="contained"
-    onClick={handleAddTransaction}
-    sx={{
-      backgroundColor: "black",
-      color: "white",
-      "&:hover": {
-        backgroundColor: "white",
-        color: "black",
-        border: "1px solid black",
-      },
-    }}
-  >
-    Add Transaction
-  </Button>
-</Grid>
-        </Grid>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, errors, touched, handleChange, handleBlur }) => (
+            <Form>
+              <Box display="grid" gap={2} gridTemplateColumns="repeat(2, 1fr)">
+                <TextField
+                  label="Description(Optional)"
+                  name="description"
+                  value={values.description}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  fullWidth
+                  variant="outlined"
+                  error={touched.description && Boolean(errors.description)}
+                  helperText={touched.description && errors.description}
+                />
+                <TextField
+                  label="Amount"
+                  name="amount"
+                  value={values.amount}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  fullWidth
+                  variant="outlined"
+                  type="number"
+                  error={touched.amount && Boolean(errors.amount)}
+                  helperText={touched.amount && errors.amount}
+                />
+                <TextField
+                  name="date"
+                  value={values.date}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  fullWidth
+                  variant="outlined"
+                  type="date"
+                  error={touched.date && Boolean(errors.date)}
+                  helperText={touched.date && errors.date}
+                />
+                <TextField
+                  select
+                  name="acc_num"
+                  value={values.acc_num}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  error={touched.acc_num && Boolean(errors.acc_num)}
+                  helperText={touched.acc_num && errors.acc_num}
+                  label="Account Number"
+                >
+                  {accounts.map((account) => (
+                    <MenuItem key={account._id} value={account.acc_num}>
+                      {account.acc_num}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+              <Box sx={{ textAlign: "right", mt: 2 }}>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  sx={{
+                    backgroundColor: "black",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "white",
+                      color: "black",
+                      border: "1px solid black",
+                    },
+                  }}
+                >
+                  Add Transaction
+                </Button>
+              </Box>
+            </Form>
+          )}
+        </Formik>
       </Card>
 
-      {/* Transaction Table */}
       <TableContainer component={Card}>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "black", color: "white" }}>
             <TableRow>
-              <TableCell>Description</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Account Number</TableCell>
-              <TableCell>CVV</TableCell>
+              <StyledCell>Description</StyledCell>
+              <StyledCell>Amount</StyledCell>
+              <StyledCell>Date</StyledCell>
+              <StyledCell>Account Number</StyledCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -154,8 +222,31 @@ const TransactionPage = () => {
                 <TableCell>{transaction.description}</TableCell>
                 <TableCell>{transaction.amount}</TableCell>
                 <TableCell>{transaction.date}</TableCell>
-                <TableCell>{transaction.accountNumber}</TableCell>
-                <TableCell>{transaction.cvv}</TableCell>
+                <TableCell>********{transaction.acc_num.slice(-5)}</TableCell>
+                <TableCell>
+                  <Grid2
+                    container
+                    spacing={1}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                    }}
+                  >
+                    <Button
+                      onClick={() => deleteButton(transaction)}
+                      sx={{ backgroundColor: "error", height: 30 }}
+                    >
+                      <Image
+                        src="/delete.png"
+                        alt="Icon"
+                        width={18}
+                        height={18}
+                        loading="lazy"
+                      />
+                    </Button>
+                  </Grid2>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
