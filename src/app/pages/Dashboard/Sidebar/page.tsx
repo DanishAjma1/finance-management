@@ -19,6 +19,7 @@ export default function Sidebar() {
     <Box>
       <Grid2>
         <StyledGrid>
+          <Grid2 sx={{borderRadius:'50%'}}>
           <Image
             src={"/financialManagementIcon.jpg"}
             height={100}
@@ -26,6 +27,7 @@ export default function Sidebar() {
             alt="nothing"
             className="rounded-[50%]"
           />
+          </Grid2>
           <Typography sx={{ fontFamily: "sans-serif"}}>
             Danish Ajmal
           </Typography>

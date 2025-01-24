@@ -87,10 +87,9 @@ export async function GET(req) {
   try {
     await connectMongoDB();
     const userId = getUserID(req);
-    console.log(userId);
     const transaction = await Transaction.find({ user_id: userId });
     return new Response(
-      JSON.stringify({ message: "Transaction deleted successfully" }),
+      JSON.stringify({ transaction },{status:200}),
       {
         status: 200,
       }
