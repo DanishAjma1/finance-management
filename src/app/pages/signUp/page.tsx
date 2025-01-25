@@ -60,7 +60,6 @@ const validationSchema = Yup.object().shape({
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm Password is required"),
 });
-
 export default function SignUp() {
   const router = useRouter();
     React.useEffect(() => {
@@ -107,9 +106,10 @@ export default function SignUp() {
                   password: values.password,
                  }),
               });
-
               if (response.ok) {
-                window.location.href = "/pages/signIn"; // Redirect to sign-in page
+                const router = useRouter();
+                alert("Sign-up successful. Please sign in.");
+                router.push("/");
               } else {
                 alert("Something went wrong!");
               }

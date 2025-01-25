@@ -32,9 +32,19 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // Register Chart.js modules
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const DashboardAndCharts = () => {
   const [progress, setProgress] = useState(0);
@@ -94,7 +104,8 @@ const DashboardAndCharts = () => {
       {
         label: "Sales ($)",
         data: [
-          1200, 1900, 3000, 5000, 2400, 3200, 4000, 2800, 3300, 3500, 4200, 4600,
+          1200, 1900, 3000, 5000, 2400, 3200, 4000, 2800, 3300, 3500, 4200,
+          4600,
         ],
         backgroundColor: "rgba(63, 81, 181, 0.6)",
         borderColor: "rgba(63, 81, 181, 1)",
@@ -152,6 +163,37 @@ const DashboardAndCharts = () => {
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
+  const { status } = useSession();
+
+  const router = useRouter();
+
+  const showSession = () => {
+    if (status === "authenticated") {
+      return (
+        <button
+          className="border border-solid border-black rounded"
+          onClick={() => {
+            signOut({ redirect: false }).then(() => {
+              router.push("/");
+            });
+          }}
+        >
+          Sign Out
+        </button>
+      );
+    } else if (status === "loading") {
+      return <span className="text-[#888] text-sm mt-7">Loading...</span>;
+    } else {
+      return (
+        <Link
+          href="/pages/signIn"
+          className="border border-solid border-black rounded"
+        >
+          Sign In
+        </Link>
+      );
+    }
+  };
 
   return (
     <Box
@@ -179,7 +221,14 @@ const DashboardAndCharts = () => {
           <Typography variant="h6" sx={{ fontWeight: 600, marginBottom: 2 }}>
             Spending Summary
           </Typography>
-          <Box sx={{ position: "relative", width: 100, height: 100, margin: "0 auto" }}>
+          <Box
+            sx={{
+              position: "relative",
+              width: 100,
+              height: 100,
+              margin: "0 auto",
+            }}
+          >
             <CircularProgress
               variant="determinate"
               value={progress}
@@ -199,7 +248,10 @@ const DashboardAndCharts = () => {
                 justifyContent: "center",
               }}
             >
-              <Typography variant="h4" sx={{ fontWeight: 600, fontSize: "1.6rem" }}>
+              <Typography
+                variant="h4"
+                sx={{ fontWeight: 600, fontSize: "1.6rem" }}
+              >
                 {"{"}${progress}%{"}"}
               </Typography>
             </Box>
@@ -210,7 +262,12 @@ const DashboardAndCharts = () => {
           <RadioGroup
             value={category}
             onChange={handleCategoryChange}
-            sx={{ display: "flex", flexDirection: "row", justifyContent: "center", marginTop: 2 }}
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              marginTop: 2,
+            }}
           >
             <FormControlLabel
               value="Outcome"
@@ -236,8 +293,8 @@ const DashboardAndCharts = () => {
 
       {/* Recent Transactions */}
       <Card
-       component="a"
-      href="pages/Transactions"
+        component="a"
+        href="pages/Transactions"
         sx={{
           background: "#1e1e1e",
           color: "#fff",
@@ -299,7 +356,10 @@ const DashboardAndCharts = () => {
                             }}
                           />
                           <Box>
-                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            <Typography
+                              variant="body1"
+                              sx={{ fontWeight: 600 }}
+                            >
                               {transaction.title}
                             </Typography>
                             <Typography variant="body2" color="gray">
@@ -336,7 +396,9 @@ const DashboardAndCharts = () => {
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell sx={{ color: "gray" }}>All Transactions</TableCell>
+                      <TableCell sx={{ color: "gray" }}>
+                        All Transactions
+                      </TableCell>
                       <TableCell sx={{ color: "gray" }} align="right">
                         ${totalAmount.toFixed(2)}
                       </TableCell>
@@ -351,8 +413,8 @@ const DashboardAndCharts = () => {
 
       {/* Bar Chart */}
       <Card
-         component="a"
-      href="pages/Analytics"
+        component="a"
+        href="pages/Analytics"
         sx={{
           position: "relative",
           width: "100%",
@@ -366,97 +428,101 @@ const DashboardAndCharts = () => {
         <Bar data={barChartData} options={barChartOptions} />
       </Card>
       <Card
-  sx={{
-    marginBottom: 3,
-    padding: 3,
-    backgroundColor: "#1e1e1e",
-    color: "#fff",
-    borderRadius: "16px",
-    boxShadow: 4,
-    transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-    "&:hover": {
-      transform: "scale(1.05)",
-      boxShadow: 10,
-    },
-  }}
->
-  <CardContent>
-    <Typography variant="h6" sx={{ fontWeight: 500 }}>
-      Debit
-    </Typography>
-    {firstCard ? (
-      <>
-        <Chip
-          label={firstCard.status}
-          color={firstCard.status === "Active" ? "success" : "error"}
-          sx={{
-            marginTop: 1,
-            backgroundColor:
-              firstCard.cardBrand === "MasterCard" ? "#FFB81C" : "#1976D2",
-          }}
-        />
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            {firstCard.name}
+        sx={{
+          marginBottom: 3,
+          padding: 3,
+          backgroundColor: "#1e1e1e",
+          color: "#fff",
+          borderRadius: "16px",
+          boxShadow: 4,
+          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+          "&:hover": {
+            transform: "scale(1.05)",
+            boxShadow: 10,
+          },
+        }}
+      >
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: 500 }}>
+            Debit
           </Typography>
-          <Typography variant="body2">VISA</Typography>
-          <Typography variant="body2">{firstCard.expiry}</Typography>
-        </Box>
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body2">
-            CVV: {firstCard.showDetails ? firstCard.cvv : "*"}
-          </Typography>
-          <Typography variant="body2">
-            Spending Limit: ${firstCard.spendingLimit.toFixed(2)}
-          </Typography>
-          <LinearProgress
-            variant="determinate"
-            value={(firstCard.spendingLimit / 10000) * 100}
-            sx={{
-              mt: 1,
-              height: 8,
-              borderRadius: 5,
-              "& .MuiLinearProgress-bar": {
-                backgroundColor:
-                  firstCard.spendingLimit > 7000 ? "red" : "lightgreen",
-              },
-            }}
-          />
-        </Box>
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body2">
-            PIN: {firstCard.showPin ? firstCard.pin : "**"}
-          </Typography>
-        </Box>
-      </>
-    ) : (
-      <Typography variant="body2" color="gray">
-        No Card Available
-      </Typography>
-    )}
-  </CardContent>
-  <Box
-    sx={{
-      display: "flex",
-      justifyContent: "center",
-      marginTop: 2,
-    }}
-  >
-   <Button
-                  variant="outlined"href="pages/Card"
+          {firstCard ? (
+            <>
+              <Chip
+                label={firstCard.status}
+                color={firstCard.status === "Active" ? "success" : "error"}
+                sx={{
+                  marginTop: 1,
+                  backgroundColor:
+                    firstCard.cardBrand === "MasterCard"
+                      ? "#FFB81C"
+                      : "#1976D2",
+                }}
+              />
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  {firstCard.name}
+                </Typography>
+                <Typography variant="body2">VISA</Typography>
+                <Typography variant="body2">{firstCard.expiry}</Typography>
+              </Box>
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="body2">
+                  CVV: {firstCard.showDetails ? firstCard.cvv : "*"}
+                </Typography>
+                <Typography variant="body2">
+                  Spending Limit: ${firstCard.spendingLimit.toFixed(2)}
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={(firstCard.spendingLimit / 10000) * 100}
                   sx={{
-                    color: "#fff",
-                    borderColor: "#fff",
-                    textTransform: 'none',
-                    borderRadius: 20,
-                    padding: '6px 20px',
-                    '&:hover': { backgroundColor: "#333" }
+                    mt: 1,
+                    height: 8,
+                    borderRadius: 5,
+                    "& .MuiLinearProgress-bar": {
+                      backgroundColor:
+                        firstCard.spendingLimit > 7000 ? "red" : "lightgreen",
+                    },
                   }}
-                >
-                  Show More 
-                </Button>
-  </Box>
-</Card>
+                />
+              </Box>
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="body2">
+                  PIN: {firstCard.showPin ? firstCard.pin : "**"}
+                </Typography>
+              </Box>
+            </>
+          ) : (
+            <Typography variant="body2" color="gray">
+              No Card Available
+            </Typography>
+          )}
+        </CardContent>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 2,
+          }}
+        >
+          <Button
+            variant="outlined"
+            href="pages/Card"
+            sx={{
+              color: "#fff",
+              borderColor: "#fff",
+              textTransform: "none",
+              borderRadius: 20,
+              padding: "6px 20px",
+              "&:hover": { backgroundColor: "#333" },
+            }}
+          >
+            Show More
+          </Button>
+        </Box>
+      </Card>
+      {showSession()}
     </Box>
   );
 };

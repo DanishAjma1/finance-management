@@ -172,13 +172,37 @@ export default function AddUserInfo() {
             flexDirection: { xs: "column" },
           }}
         >
-          <StyledButton
-            sx={{ alignSelf: "end", padding: "8px 20px" }}
-            onClick={handleOpen}
-            startIcon={<Add />}
-          >
-            Create Account
-          </StyledButton>
+          <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+          Accounts
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          sx={{
+            backgroundColor: "#333",
+            textTransform: "none",
+            borderRadius: 2,
+            padding: "8px 20px",
+            boxShadow: 3,
+            "&:hover": {
+              backgroundColor: "#444",
+              transform: "scale(1.05)",
+              boxShadow: 5,
+            },
+          }}
+          onClick={handleOpen}
+        >
+          Create Account
+        </Button>
+      </Box>
           <Grid2 container spacing={3}>
             {accounts.map((account, index) => {
               const previousBalance =

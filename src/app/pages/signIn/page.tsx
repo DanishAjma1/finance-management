@@ -16,6 +16,7 @@ import { Box } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -98,16 +99,15 @@ export default function SignIn() {
             initialValues={{
               email: "",
               password: "",
-              remember: false,
             }}
             validationSchema={validationSchema}
             onSubmit={async (values) => {
-              const res = await fetch("/api/auth/signIn", {
-                method: "POST",
-                body: JSON.stringify({
-                  email: values.email,
-                  password: values.password,
-                }),
+              console.log(values);
+              const res = await signIn("credentials", {
+                email: values.email,
+                password: values.password,
+                callbackUrl: "/",
+                redirect: false,
               });
               if (res.ok) {
                 router.push("/");
@@ -151,17 +151,6 @@ export default function SignIn() {
                     onChange={handleChange}
                   />
                 </FormControl>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="remember"
-                      color="primary"
-                      checked={values.remember}
-                      onChange={handleChange}
-                    />
-                  }
-                  label="Remember me"
-                />
                 <ForgotPassword open={open} handleClose={handleClose} />
                 <StyledButton type="submit" variant="outlined">
                   Sign in
