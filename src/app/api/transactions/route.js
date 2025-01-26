@@ -1,45 +1,47 @@
 import Transaction from "../../models/transactions";
 import connectMongoDB from "../../lib/mongoDb";
 import { ObjectId } from "mongodb";
-import jwt from "jsonwebtoken";
+import User from "../../models/users";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 
-const getUserID = (req) => {
-  const cookies = req.headers.get("Cookie");
-
-  if (!cookies) {
-    throw new Error("Unauthorized cookie");
-  }
-
-  const authToken = cookies
-    .split(";")
-    .find((cookie) => cookie.trim().startsWith("auth_token="))
-    ?.split("=")[1];
-
-  if (!authToken) {
-    throw new Error("Token not found");
-  }
-
+const getUserID = async () => {
   try {
-    const decoded = jwt.verify(authToken, process.env.JWT_SECRET);
-
-    if (!decoded || !decoded.id) {
-      throw new Error("Invalid token");
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.id) {
+      return null;
     }
 
-    return decoded.id;
-  } catch (err) {
-    throw new Error("Invalid or expired token");
+    const user = await User.findById(session.user.id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user._id.toString();
+  } catch (error) {
+    console.error("Error in getUserID:", error.message);
+    return null;
   }
 };
 
 export async function POST(req) {
-  const { description, acc_num, amount, date } = await req.json();
   try {
-    await connectMongoDB();
-    const userId = getUserID(req);
-    if (!userId) {
-      return new Response({ message: "User id required.." }, { status: 400 });
+    const { description, acc_num, amount, date } = await req.json();
+
+    if (!description || !acc_num || !amount || !date) {
+      return new Response(JSON.stringify({ message: "All fields are required" }), {
+        status: 400,
+      });
     }
+
+    await connectMongoDB();
+    const userId = await getUserID();
+    if (!userId) {
+      return new Response(JSON.stringify({ message: "User id required.." }), {
+        status: 400,
+      });
+    }
+
     await Transaction.create({
       description,
       amount,
@@ -47,13 +49,16 @@ export async function POST(req) {
       date,
       user_id: userId,
     });
+
     return new Response(
-      { message: "Data inserted successfully.." },
+      JSON.stringify({ message: "Data inserted successfully.." }),
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
-    return new Response({ error }, { status: 500 });
+    console.error("Error in POST:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
   }
 }
 
@@ -71,9 +76,7 @@ export async function DELETE(req) {
 
     return new Response(
       JSON.stringify({ message: "Transaction deleted successfully" }),
-      {
-        status: 200,
-      }
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error during deletion:", error);
@@ -86,16 +89,22 @@ export async function DELETE(req) {
 export async function GET(req) {
   try {
     await connectMongoDB();
-    const userId = getUserID(req);
-    console.log(userId);
-    const transaction = await Transaction.find({ user_id: userId });
+    const userId = await getUserID();
+    if (!userId) {
+      return new Response(JSON.stringify({ message: "User id required.." }), {
+        status: 400,
+      });
+    }
+
+    const transactions = await Transaction.find({ user_id: userId });
     return new Response(
-      JSON.stringify({ message: "Transaction deleted successfully" }),
-      {
-        status: 200,
-      }
+      JSON.stringify({ transactions }),
+      { status: 200 }
     );
   } catch (error) {
-    return new Response(error.message, { status: 500 });
+    console.error("Error in GET:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
   }
 }

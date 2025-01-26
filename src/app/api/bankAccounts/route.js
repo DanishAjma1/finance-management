@@ -1,8 +1,24 @@
+import { ObjectId } from "mongodb";
+import { authOptions } from "../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 import connectMongoDB from "../../lib/mongoDb";
 import bankAccounts from "../../models/bankAccounts";
-import { ObjectId } from "mongodb";
-import jwt from "jsonwebtoken";
+import User from "../../models/users";
+import { getServerSession } from "next-auth";
+
+const findAccountByAccNum = async (acc_num) => {
+  try {
+    const account = await bankAccounts.findOne({ acc_num });
+    if (!account) {
+      throw new Error("Account doesn't exist.");
+    }
+    return account;
+  } catch (error) {
+    console.error("Error in findAccountByAccNum:", error.message);
+    throw error; // Propagate the error
+  }
+};
+
 
 export async function POST(req) {
   try {
@@ -10,14 +26,20 @@ export async function POST(req) {
 
     await connectMongoDB();
 
-    if (await bankAccounts.findOne({ acc_num: new Object(acc_num) })) {
-      console.log("Account already exist");
-      return new Response(
-        { message: "Account already exist" },
-        { status: 400 } 
-      );
+    const existingAccount = await bankAccounts.findOne({ acc_num });
+    if (existingAccount) {
+      return new Response(JSON.stringify({ message: "Account already exists" }), {
+        status: 400,
+      });
     }
-    const userId = getUserID(req);
+
+    const userId = await getUserID();
+    if (!userId) {
+      return new Response(JSON.stringify({ message: "User not authenticated" }), {
+        status: 401,
+      });
+    }
+
     await bankAccounts.create({
       name,
       description,
@@ -25,96 +47,109 @@ export async function POST(req) {
       acc_num,
       user_id: userId,
     });
-    return new Response(JSON.stringify({message:"Data inserted.." }), { status: 201 });
+
+    return new Response(JSON.stringify({ message: "Data inserted." }), {
+      status: 201,
+    });
   } catch (error) {
-    return new Response({ error }, { status: 500 });
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 }
-const getUserID = (req) => {
-  const cookies = req.headers.get("Cookie");
 
-  if (!cookies) {
-    throw new Error("Unauthorized cookie");
-  }
-
-  const authToken = cookies
-    .split(";")
-    .find((cookie) => cookie.trim().startsWith("auth_token="))
-    ?.split("=")[1];
-
-  if (!authToken) {
-    throw new Error("Token not found");
-  }
-
+const getUserID = async () => {
   try {
-    const decoded = jwt.verify(authToken, process.env.JWT_SECRET);
-
-    if (!decoded || !decoded.id) {
-      throw new Error("Invalid token");
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.id) {
+      return null;
     }
 
-    return decoded.id;
-  } catch (err) {
-    throw new Error("Invalid or expired token");
+    const user = await User.findById(session.user.id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user._id.toString();
+  } catch (error) {
+    console.error("Error in getUserID:", error.message);
+    return null;
   }
 };
-
 export async function GET(req) {
   try {
     await connectMongoDB();
-    const userId = getUserID(req);
+    const userId = await getUserID(req);
     const bankAccount = await bankAccounts.find({ user_id: userId });
     return NextResponse.json({ bankAccount }, { status: 200 });
   } catch (error) {
-    return new Response(error.message, { status: 500 });
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
   }
 }
+
 export async function PUT(req) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    if (!id) {
-      return new Response(JSON.stringify({ message: "ID is required" }), {
+    if (!id || !ObjectId.isValid(id)) {
+      return new Response(JSON.stringify({ message: "Valid ID is required." }), {
         status: 400,
       });
     }
 
     const body = await req.json();
-
     await connectMongoDB();
+
     const res = await bankAccounts.updateOne(
       { _id: new ObjectId(id) },
       { $set: body }
     );
-    return new Response(JSON.stringify({ message: "Updated successfully" }), {
+
+    if (res.matchedCount === 0) {
+      return new Response(
+        JSON.stringify({ message: "Bank account not found." }),
+        { status: 404 }
+      );
+    }
+
+    return new Response(JSON.stringify({ message: "Updated successfully." }), {
       status: 200,
     });
   } catch (error) {
-    return new Response({ message: "something went wrong.." }, { status: 500 });
+    return new Response(JSON.stringify({ message: "Something went wrong." }), {
+      status: 500,
+    });
   }
 }
+
 export async function DELETE(req) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    if (!id) {
-      return new Response(JSON.stringify({ message: "ID is required" }), {
+
+    if (!id || !ObjectId.isValid(id)) {
+      return new Response(JSON.stringify({ message: "Valid ID is required." }), {
         status: 400,
       });
     }
+
     await connectMongoDB();
-    await bankAccounts.deleteOne({ _id: new ObjectId(id) });
+    const res = await bankAccounts.deleteOne({ _id: new ObjectId(id) });
+
+    if (res.deletedCount === 0) {
+      return new Response(
+        JSON.stringify({ message: "Bank account not found." }),
+        { status: 404 }
+      );
+    }
 
     return new Response(
-      JSON.stringify({ message: "Account deleted successfully" }),
-      {
-        status: 200,
-      }
+      JSON.stringify({ message: "Account deleted successfully." }),
+      { status: 200 }
     );
   } catch (error) {
-    console.error("Error during deletion:", error);
-    return new Response(JSON.stringify({ message: "Something went wrong" }), {
+    return new Response(JSON.stringify({ message: "Something went wrong." }), {
       status: 500,
     });
   }
@@ -123,17 +158,27 @@ export async function DELETE(req) {
 export async function PATCH(req) {
   try {
     const { acc_num, amount } = await req.json();
-    await connectMongoDB();
-    const account = await bankAccounts.findOne({ acc_num });
-    if (!account) {
+
+    if (!acc_num || typeof amount !== "number" || amount <= 0) {
       return new Response(
-        JSON.stringify({ message: "Account doesn't exist." }),
+        JSON.stringify({ message: "Valid acc_num and amount are required." }),
         { status: 400 }
       );
     }
+
+    await connectMongoDB();
+    const account = await findAccountByAccNum(acc_num);
+
+    if (account.balance < amount) {
+      return new Response(
+        JSON.stringify({ message: "Insufficient balance." }),
+        { status: 400 }
+      );
+    }
+
     const updatedAmount = account.balance - amount;
     await bankAccounts.updateOne(
-      { _id: account._id },
+      { acc_num: account.acc_num },
       { $set: { balance: updatedAmount } }
     );
 
@@ -142,10 +187,9 @@ export async function PATCH(req) {
       { status: 200 }
     );
   } catch (error) {
-    console.error(error);
-    return new Response(
-      JSON.stringify({ message: "Something went wrong." }),
-      { status: 500 }
-    );
+    console.error("Error in PATCH:", error.message);
+    return new Response(JSON.stringify({ message: "Something went wrong." }), {
+      status: 500,
+    });
   }
 }

@@ -68,8 +68,8 @@ const TransactionPage = () => {
       if (response.ok && response2.ok) {
         const { bankAccount } = await response.json();
         setAccounts(bankAccount);
-        const {transaction} = await response2.json();
-        setTransactions(transaction);
+        const {transactions} = await response2.json();
+        setTransactions(transactions);
       }
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -214,6 +214,7 @@ const TransactionPage = () => {
               <StyledCell>Amount</StyledCell>
               <StyledCell>Date</StyledCell>
               <StyledCell>Account Number</StyledCell>
+              <StyledCell>Actions</StyledCell>
             </TableRow>
           </TableHead>
           <TableBody>
