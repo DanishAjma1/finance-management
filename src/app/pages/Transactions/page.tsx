@@ -41,16 +41,17 @@ const TransactionPage = () => {
     fontSize: "medium",
     fontWeight: "lighter",
   }));
-  const deleteButton = async (tran) =>{
+  const deleteButton = async (tran) => {
     try {
       const response = await fetch(`/api/transactions?id=${tran._id}`, {
         method: "DELETE",
       });
       if (response.ok) {
-        const updatedTransactions =
-          transactions.filter((transaction) => transaction._id !== tran._id )
-          setTransactions(updatedTransactions);
-          toast.info("Transaction deleted successfully..");
+        const updatedTransactions = transactions.filter(
+          (transaction) => transaction._id !== tran._id
+        );
+        setTransactions(updatedTransactions);
+        toast.info("Transaction deleted successfully..");
       }
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -68,7 +69,7 @@ const TransactionPage = () => {
       if (response.ok && response2.ok) {
         const { bankAccount } = await response.json();
         setAccounts(bankAccount);
-        const {transactions} = await response2.json();
+        const { transactions } = await response2.json();
         setTransactions(transactions);
       }
     } catch (error) {
@@ -91,7 +92,7 @@ const TransactionPage = () => {
     if (!values.date) {
       values.date = new Date(Date.now()).toDateString().split("T")[0];
     }
-    
+
     const respons = await fetch("/api/bankAccounts", {
       method: "PATCH",
       headers: {
@@ -99,7 +100,7 @@ const TransactionPage = () => {
       },
       body: JSON.stringify({ acc_num: values.acc_num, amount: values.amount }),
     });
-    if(respons.ok){
+    if (respons.ok) {
       const response = await fetch("/api/transactions", {
         method: "POST",
         headers: {

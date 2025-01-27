@@ -60,7 +60,7 @@ const AboutUs = () => {
                   textAlign: "center",
                   padding: 2,
                   color: "#333",
-                  textDecoration:'underline',
+                  textDecoration: "underline",
                 }}
               >
                 What We Do
@@ -123,7 +123,7 @@ const AboutUs = () => {
                   textAlign: "center",
                   padding: 2,
                   color: "#333",
-                  textDecoration:'underline',
+                  textDecoration: "underline",
                 }}
               >
                 Why Choose Us
@@ -180,149 +180,146 @@ const AboutUs = () => {
                 textAlign: "center",
                 padding: 2,
                 color: "#333",
-                textDecoration:'underline',
+                textDecoration: "underline",
               }}
             >
               Our Team
             </Typography>
             <Divider sx={{ marginY: 4 }} />
           </Grid2>
-          
-          <Grid2 
-  size={12} 
-  gap={4} 
-  padding={4}
-  sx={{ display: "flex", flexWrap: "wrap",justifyContent:'center' }}
->
-  <Grid2>
-    <Box
-      sx={{
-        position: "relative",
-        "&:hover .overlay": {
-          opacity: 1,
-        },
-      }}
-    >
-      <img
-        src="/backend.jpeg"
-        alt="Backend Developer"
-        style={{
-          width: "300px", // Consistent width
-          height: "400px", // Consistent height
-          borderRadius: "10px",
-          objectFit: "cover", // Maintains aspect ratio
-        }}
-      />
-      <Box
-        className="overlay"
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: 0,
-          transition: "opacity 0.3s",
-          borderRadius: 2,
-        }}
-      >
-        Backend Developer
-      </Box>
-    </Box>
-  </Grid2>
-  
-  <Grid2>
-    <Box
-      sx={{
-        position: "relative",
-        "&:hover .overlay": {
-          opacity: 1,
-        },
-      }}
-    >
-      <img
-        src="/UIDeveloper.jpeg"
-        alt="Frontend Developer"
-        style={{
-          
-          width: "300px", // Consistent width
-          height: "400px", // Consistent height
-          borderRadius: "10px",
-          objectFit: "cover", // Maintains aspect ratio
-        }}
-      />
-      <Box
-        className="overlay"
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: 0,
-          transition: "opacity 0.3s",
-          borderRadius: 2,
-        }}
-      >
-        Frontend Developer
-      </Box>
-    </Box>
-  </Grid2>
 
-  <Grid2>
-    <Box
-      sx={{
-        position: "relative",
-        "&:hover .overlay": {
-          opacity: 1,
-        },
-      }}
-    >
-      <img
-        src="/Mailer.jpeg"
-        alt="Mail Sender"
-        style={{
-          
-          width: "300px", // Consistent width
-          height: "400px", // Consistent height
-          borderRadius: "10px",
-          objectFit: "cover", // Maintains aspect ratio
-        }}
-      />
-      <Box
-        className="overlay"
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: 0,
-          transition: "opacity 0.3s",
-          borderRadius: 2,
-        }}
-      >
-        Mail Sender
-      </Box>
-    </Box>
-  </Grid2>
-</Grid2>
+          <Grid2
+            size={12}
+            gap={4}
+            padding={4}
+            sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+          >
+            <Grid2>
+              <Box
+                sx={{
+                  position: "relative",
+                  "&:hover .overlay": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                <img
+                  src="/backend.jpeg"
+                  alt="Backend Developer"
+                  style={{
+                    width: "300px", // Consistent width
+                    height: "400px", // Consistent height
+                    borderRadius: "10px",
+                    objectFit: "cover", // Maintains aspect ratio
+                  }}
+                />
+                <Box
+                  className="overlay"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: 0,
+                    transition: "opacity 0.3s",
+                    borderRadius: 2,
+                  }}
+                >
+                  Backend Developer
+                </Box>
+              </Box>
+            </Grid2>
 
+            <Grid2>
+              <Box
+                sx={{
+                  position: "relative",
+                  "&:hover .overlay": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                <img
+                  src="/UIDeveloper.jpeg"
+                  alt="Frontend Developer"
+                  style={{
+                    width: "300px", // Consistent width
+                    height: "400px", // Consistent height
+                    borderRadius: "10px",
+                    objectFit: "cover", // Maintains aspect ratio
+                  }}
+                />
+                <Box
+                  className="overlay"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: 0,
+                    transition: "opacity 0.3s",
+                    borderRadius: 2,
+                  }}
+                >
+                  Frontend Developer
+                </Box>
+              </Box>
+            </Grid2>
+
+            <Grid2>
+              <Box
+                sx={{
+                  position: "relative",
+                  "&:hover .overlay": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                <img
+                  src="/Mailer.jpeg"
+                  alt="Mail Sender"
+                  style={{
+                    width: "300px", // Consistent width
+                    height: "400px", // Consistent height
+                    borderRadius: "10px",
+                    objectFit: "cover", // Maintains aspect ratio
+                  }}
+                />
+                <Box
+                  className="overlay"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: 0,
+                    transition: "opacity 0.3s",
+                    borderRadius: 2,
+                  }}
+                >
+                  Mail Sender
+                </Box>
+              </Box>
+            </Grid2>
+          </Grid2>
         </Grid2>
 
         <Divider sx={{ marginY: 4 }} />
@@ -346,7 +343,7 @@ const AboutUs = () => {
                   textAlign: "center",
                   padding: 2,
                   color: "#333",
-                  textDecoration:'underline'
+                  textDecoration: "underline",
                 }}
               >
                 Our Vision
@@ -378,7 +375,7 @@ const AboutUs = () => {
                   textAlign: "center",
                   padding: 2,
                   color: "#333",
-                  textDecoration:'underline'
+                  textDecoration: "underline",
                 }}
               >
                 Join Us on This Journey
@@ -410,14 +407,11 @@ const AboutUs = () => {
                 <Typography
                   variant="h6"
                   gutterBottom
-                  sx={{ textAlign: "center"}}
+                  sx={{ textAlign: "center" }}
                 >
                   About Us
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ textAlign: "center" }}
-                >
+                <Typography variant="body2" sx={{ textAlign: "center" }}>
                   We are committed to providing innovative financial solutions
                   to help you manage your finances better.
                 </Typography>

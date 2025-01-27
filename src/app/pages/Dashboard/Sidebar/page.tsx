@@ -19,7 +19,7 @@ export default function Sidebar() {
     <Box>
       <Grid2>
         <StyledGrid>
-          <Grid2 sx={{marginTop:2}}>
+          <Grid2 sx={{ marginTop: 2 }}>
             <Image
               src={"/financialManagementIcon.jpg"}
               height={100}

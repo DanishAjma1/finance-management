@@ -66,19 +66,17 @@ export default function CardManagement() {
   };
   const fetchAccounts = async () => {
     try {
-      const res = await fetch("/api/bankAccounts",{
+      const res = await fetch("/api/bankAccounts", {
         method: "GET",
-      }
-    );
-    if(res.ok)
-    {
-      const { bankAccount } = await res.json();
+      });
+      if (res.ok) {
+        const { bankAccount } = await res.json();
         setAccounts(bankAccount);
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }catch(error){
-    console.log(error);
-  }
-}
+  };
   React.useEffect(() => {
     fetchCards();
     fetchAccounts();
@@ -386,25 +384,25 @@ export default function CardManagement() {
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
-                <TextField
-                  select
-                  name="acc_num"
-                  value={values.number}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  type="text"
-                  fullWidth
-                  variant="outlined"
-                  error={touched.number && Boolean(errors.number)}
-                  helperText={touched.number && errors.number}
-                  label="Account Number"
-                >
-                  {accounts.map((account) => (
-                    <MenuItem key={account._id} value={account.acc_num}>
-                      {account.acc_num}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  <TextField
+                    select
+                    name="acc_num"
+                    value={values.number}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    error={touched.number && Boolean(errors.number)}
+                    helperText={touched.number && errors.number}
+                    label="Account Number"
+                  >
+                    {accounts.map((account) => (
+                      <MenuItem key={account._id} value={account.acc_num}>
+                        {account.acc_num}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
                   <TextField

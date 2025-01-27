@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 const SMTP_SERVER_HOST = process.env.SMTP_SERVER_HOST;
 const SMTP_SERVER_USERNAME = process.env.SMTP_SERVER_USERNAME;
 const SMTP_SERVER_PASSWORD = process.env.SMTP_SERVER_PASSWORD;
-console.log(SMTP_SERVER_PASSWORD,SMTP_SERVER_USERNAME)
+console.log(SMTP_SERVER_PASSWORD, SMTP_SERVER_USERNAME);
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 export async function Mail({ to, subject, message }) {
   try {
-    console.log(to,subject,message)
+    console.log(to, subject, message);
     const isVerified = await transporter.verify();
   } catch (error) {
     console.error(
@@ -33,7 +33,7 @@ export async function Mail({ to, subject, message }) {
     from: SMTP_SERVER_USERNAME,
     to: to,
     subject: subject,
-    html: message, 
+    html: message,
   });
 
   console.log("Message Sent", info.messageId);
