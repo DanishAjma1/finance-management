@@ -15,6 +15,8 @@ import { Grid2 } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
+import { Mail } from '../../lib/send-mail';
+import { toast } from "react-toastify";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -60,16 +62,19 @@ const validationSchema = Yup.object().shape({
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm Password is required"),
 });
+
 export default function SignUp() {
   const router = useRouter();
-    React.useEffect(() => {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("auth_token="));
-      if (token) {
-        router.push("/");
-      }
-    }, []);
+
+  React.useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("auth_token="));
+    if (token) {
+      router.push("/");
+    }
+  }, [router]);
+
   return (
     <Grid2>
       <CssBaseline enableColorScheme />
@@ -104,11 +109,16 @@ export default function SignUp() {
                 body: JSON.stringify({
                   email: values.email,
                   password: values.password,
-                 }),
+                }),
               });
+
               if (response.ok) {
-                const router = useRouter();
-                alert("Sign-up successful. Please sign in.");
+                toast.success("User added");
+                await Mail({
+                  to: values.email,
+                  subject: "Sign-up successful",
+                  message: "Please sign in to continue.",
+                });
                 router.push("/");
               } else {
                 alert("Something went wrong!");
@@ -116,7 +126,7 @@ export default function SignUp() {
             }}
           >
             {({ values, handleChange, handleSubmit, errors, touched }) => (
-              <FormContainer component="form" onSubmit={handleSubmit} gap={2}>
+              <FormContainer component="form" gap={2} onSubmit={handleSubmit}>
                 <TextField
                   error={touched.email && Boolean(errors.email)}
                   helperText={touched.email && errors.email}

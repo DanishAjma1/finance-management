@@ -79,14 +79,14 @@ export default function SignIn() {
   }));
   const router = useRouter();
 
-  React.useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("auth_token="));
-    if (token) {
-      router.push("/");
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   const token = document.cookie
+  //     .split("; ")
+  //     .find((row) => row.startsWith("auth_token="));
+  //   if (token) {
+  //     router.push("/");
+  //   }
+  // }, []);
   return (
     <Box>
       <CssBaseline enableColorScheme />
