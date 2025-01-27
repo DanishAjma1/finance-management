@@ -100,7 +100,7 @@ export default function SignUp() {
               remember: false,
             }}
             validationSchema={validationSchema}
-            onSubmit={async (values) => {
+            onSubmit={async (values,{resetForm}) => {
               const response = await fetch("/api/auth/signUp", {
                 method: "POST",
                 headers: {
@@ -117,8 +117,9 @@ export default function SignUp() {
                 await Mail({
                   to: values.email,
                   subject: "Sign-up successful",
-                  message: "Please sign in to continue.",
+                  message: "You Signed Up in Finance Management Application,now please sign in to continue.",
                 });
+                resetForm();
                 router.push("/");
               } else {
                 alert("Something went wrong!");
@@ -127,82 +128,83 @@ export default function SignUp() {
           >
             {({ values, handleChange, handleSubmit, errors, touched }) => (
               <FormContainer component="form" gap={2} onSubmit={handleSubmit}>
-                <TextField
-                  error={touched.email && Boolean(errors.email)}
-                  helperText={touched.email && errors.email}
-                  id="email"
-                  label="Email"
-                  type="email"
-                  name="email"
-                  placeholder="your@email.com"
-                  autoComplete="off"
-                  required
-                  fullWidth
-                  variant="outlined"
-                  value={values.email}
-                  onChange={handleChange}
-                />
-                <TextField
-                  error={touched.password && Boolean(errors.password)}
-                  helperText={touched.password && errors.password}
-                  id="password"
-                  label="Password"
-                  type="password"
-                  autoComplete="off"
-                  name="password"
-                  placeholder="••••••"
-                  required
-                  fullWidth
-                  variant="outlined"
-                  value={values.password}
-                  onChange={handleChange}
-                />
-                <TextField
-                  error={touched.confirmPassword && Boolean(errors.confirmPassword)}
-                  helperText={touched.confirmPassword && errors.confirmPassword}
-                  id="confirmPassword"
-                  label="Confirm Password"
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="••••••"
-                  required
-                  fullWidth
-                  variant="outlined"
-                  value={values.confirmPassword}
-                  onChange={handleChange}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="remember"
-                      color="primary"
-                      checked={values.remember}
-                      onChange={handleChange}
-                    />
-                  }
-                  label="Remember me"
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "black",
-                  }}
+              <TextField
+                error={touched.email && Boolean(errors.email)}
+                helperText={touched.email && errors.email}
+                id="email"
+                label="Email"
+                type="email"
+                name="email"
+                placeholder="your@email.com"
+                autoComplete="off"
+                required
+                fullWidth
+                variant="outlined"
+                value={values.email}
+                onChange={handleChange}
+              />
+              <TextField
+                error={touched.password && Boolean(errors.password)}
+                helperText={touched.password && errors.password}
+                id="password"
+                label="Password"
+                type="password"
+                autoComplete="off"
+                name="password"
+                placeholder="••••••"
+                required
+                fullWidth
+                variant="outlined"
+                value={values.password}
+                onChange={handleChange}
+              />
+              <TextField
+                error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+                helperText={touched.confirmPassword && errors.confirmPassword}
+                id="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                name="confirmPassword"
+                placeholder="••••••"
+                autoComplete="off"
+                required
+                fullWidth
+                variant="outlined"
+                value={values.confirmPassword}
+                onChange={handleChange}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="remember"
+                    color="primary"
+                    checked={values.remember}
+                    onChange={handleChange}
+                  />
+                }
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{
+                  bgcolor: "black",
+                }}
+              >
+                Sign Up
+              </Button>
+              <Typography sx={{ textAlign: "center" }}>
+                Already have an account?{" "}
+                <Link
+                  href="/signIn"
+                  variant="body2"
+                  sx={{ alignSelf: "center" }}
                 >
-                  Sign Up
-                </Button>
-                <Typography sx={{ textAlign: "center" }}>
-                  Already have an account?{" "}
-                  <Link
-                    href="/signIn"
-                    variant="body2"
-                    sx={{ alignSelf: "center" }}
-                  >
-                    Sign in
-                  </Link>
-                </Typography>
-              </FormContainer>
+                  Sign in
+                </Link>
+              </Typography>
+            </FormContainer>
             )}
           </Formik>
         </Card>

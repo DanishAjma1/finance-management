@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
+import AddUserInfo from "./app/pages/AddUserInfo/page";
 
 export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
@@ -20,5 +21,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/", "/pages/signIn"],
+  matcher: ["/","/pages/Analytics", "/pages/signIn","/pages/AddUserInfo","/pages/Card","/pages/Transactions"],
 };
