@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Grid, Typography, Box, Divider, Link } from "@mui/material";
+import { Container, Grid2, Typography, Box, Divider, Link } from "@mui/material";
 import { Facebook, Twitter, Instagram, LinkedIn } from "@mui/icons-material";
 
 const AboutUs = () => {
@@ -26,9 +26,9 @@ const AboutUs = () => {
       <Divider sx={{ marginY: 4 }} />
 
       <div> {/* Single wrapper div for all content */}
-        <Grid container spacing={4}>
+        <Grid2 container spacing={4}>
           {/* "What We Do" Section */}
-          <Grid item xs={12} sm={6}>
+          <Grid2 size={{xs:12, sm:6}}>
             <Box sx={{
               backgroundColor: "white", 
               padding: 4, 
@@ -82,10 +82,10 @@ const AboutUs = () => {
                 Your financial data is safeguarded with top-notch encryption and security measures.
               </Typography>
             </Box>
-          </Grid>
+          </Grid2>
 
           {/* "Why Choose Us" Section */}
-          <Grid item xs={12} sm={6}>
+          <Grid2 size={{xs:12, sm:6}}>
             <Box sx={{
               backgroundColor: "white", 
               padding: 4, 
@@ -139,14 +139,14 @@ const AboutUs = () => {
                 We prioritize your financial privacy with state-of-the-art encryption and security measures to protect your sensitive data.
               </Typography>
             </Box>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
         <Divider sx={{ marginY: 4 }} />
 
-        <Grid container spacing={4}>
+        <Grid2 container spacing={4}>
           {/* "Our Vision" Section */}
-          <Grid item xs={12} sm={6}>
+          <Grid2 size={{xs:12, sm:6}}>
             <Box sx={{
               backgroundColor: "white", 
               padding: 4, 
@@ -170,10 +170,10 @@ const AboutUs = () => {
                 App Name] aims to simplify personal finance and make financial literacy a standard for all.
               </Typography>
             </Box>
-          </Grid>
+          </Grid2>
 
           {/* "Join Us on This Journey" Section */}
-          <Grid item xs={12} sm={6}>
+          <Grid2 size={{xs:12, sm:6}}>
             <Box sx={{
               backgroundColor: "white", 
               padding: 4, 
@@ -197,53 +197,54 @@ const AboutUs = () => {
                 support you every step of the way. Together, let’s create a future where financial stress is a thing of the past.
               </Typography>
             </Box>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </div> {/* End of single wrapper div */}
 
       {/* Footer Section */}
       <Box sx={{
-        backgroundColor: "white", 
+        backgroundColor: "black", 
         padding: 4, 
+        color: "white",
         borderRadius: 2, 
         boxShadow: 3, 
         marginTop: 4
       }}>
         <Container>
-          <Grid container spacing={4} justifyContent="space-between">
+          <Grid2 container spacing={4} justifyContent="space-between">
             {/* Footer Column 1: About */}
-            <Grid item xs={12} sm={3}>
+            <Grid2 size={{xs:12, sm:3}}>
               <Typography variant="h6" gutterBottom sx={{ textAlign: "center" }}>
                 About Us
               </Typography>
               <Typography variant="body2" paragraph sx={{ textAlign: "center" }}>
                 We are committed to providing innovative financial solutions to help you manage your finances better.
               </Typography>
-            </Grid>
+            </Grid2>
 
             {/* Footer Column 2: Quick Links */}
-            <Grid item xs={12} sm={3}>
+            <Grid2 size={{xs:12, sm:3}}>
               <Typography variant="h6" gutterBottom sx={{ textAlign: "center" }}>
                 Quick Links
               </Typography>
               <Box sx={{ textAlign: "center" }}>
-                <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: 1 }}>
+                <Link href="#" color="inherit" sx={{ display: 'block',textDecoration:'none', marginBottom: 1 }}>
                   Home
                 </Link>
-                <Link href="#about" color="inherit" sx={{ display: 'block', marginBottom: 1 }}>
+                <Link href="#about" color="inherit" sx={{ display: 'block',textDecoration:'none', marginBottom: 1 }}>
                   About Us
                 </Link>
-                <Link href="#services" color="inherit" sx={{ display: 'block', marginBottom: 1 }}>
+                <Link href="#services" color="inherit" sx={{ display: 'block',textDecoration:'none', marginBottom: 1 }}>
                   Services
                 </Link>
-                <Link href="#contact" color="inherit" sx={{ display: 'block' }}>
+                <Link href="#contact" color="inherit" sx={{ display: 'block',textDecoration:'none' }}>
                   Contact Us
                 </Link>
               </Box>
-            </Grid>
+            </Grid2>
 
             {/* Footer Column 3: Follow Us */}
-            <Grid item xs={12} sm={3}>
+            <Grid2 size={{xs:12, sm:3}}>
               <Typography variant="h6" gutterBottom sx={{ textAlign: "center" }}>
                 Follow Us
               </Typography>
@@ -261,21 +262,27 @@ const AboutUs = () => {
                   <LinkedIn />
                 </Link>
               </Box>
-            </Grid>
+            </Grid2>
 
             {/* Footer Column 4: Contact */}
-            <Grid item xs={12} sm={3}>
+            <Grid2 size={{xs:12, sm:3}}>
               <Typography variant="h6" gutterBottom sx={{ textAlign: "center" }}>
                 Contact Us
               </Typography>
               <Typography variant="body2" sx={{ textAlign: "center" }}>
-                Email: umarnadeem24@icloud.com
+                danishajmalbutt@gmail.com
+              </Typography>
+              <Typography variant="body2" sx={{ textAlign: "center" }}>
+                umarnadeem24@icloud.com
               </Typography>
               <Typography variant="body2" sx={{ textAlign: "center" }}>
                 Phone: +45 2199 7481
               </Typography>
-            </Grid>
-          </Grid>
+              <Typography variant="body2" sx={{ textAlign: "center" }}>
+                Phone: +92 318 7325159
+              </Typography>
+            </Grid2>
+          </Grid2>
 
           <Divider sx={{ marginY: 4 }} />
 

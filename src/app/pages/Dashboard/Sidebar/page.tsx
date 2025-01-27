@@ -19,14 +19,20 @@ export default function Sidebar() {
     <Box>
       <Grid2>
         <StyledGrid>
-          <Image
-            src={"/financialManagementIcon.jpg"}
-            height={100}
-            width={100}
-            alt="nothing"
-            className="rounded-[50%]"
-          />
-          <Typography sx={{ fontFamily: "sans-serif"}}>
+          <Grid2 sx={{marginTop:2}}>
+            <Image
+              src={"/financialManagementIcon.jpg"}
+              height={100}
+              width={100}
+              alt="nothing"
+              style={{
+                borderRadius: "50%",
+                overflow: "hidden",
+              }}
+            />
+          </Grid2>
+
+          <Typography sx={{ fontFamily: "sans-serif" }}>
             Danish Ajmal
           </Typography>
         </StyledGrid>

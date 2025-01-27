@@ -27,13 +27,11 @@ const getUserID = async () => {
 export async function POST(req) {
   try {
     const { description, acc_num, amount, date } = await req.json();
-
     if (!description || !acc_num || !amount || !date) {
       return new Response(JSON.stringify({ message: "All fields are required" }), {
         status: 400,
       });
     }
-
     await connectMongoDB();
     const userId = await getUserID();
     if (!userId) {

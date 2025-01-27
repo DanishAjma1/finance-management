@@ -15,7 +15,7 @@ const findAccountByAccNum = async (acc_num) => {
     return account;
   } catch (error) {
     console.error("Error in findAccountByAccNum:", error.message);
-    throw error; // Propagate the error
+    throw error;
   }
 };
 

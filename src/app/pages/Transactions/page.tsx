@@ -89,15 +89,9 @@ const TransactionPage = () => {
 
   const handleSubmit = async (values, { resetForm }) => {
     if (!values.date) {
-      values.date = new Date(Date.now()).toISOString().split("T")[0];
+      values.date = new Date(Date.now()).toDateString().split("T")[0];
     }
-    const response = await fetch("/api/transactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    
     const respons = await fetch("/api/bankAccounts", {
       method: "PATCH",
       headers: {
@@ -105,10 +99,19 @@ const TransactionPage = () => {
       },
       body: JSON.stringify({ acc_num: values.acc_num, amount: values.amount }),
     });
-    if (response.ok && respons.ok) {
-      toast.success("Transaction Successful..");
-      fetchAccounts();
-      resetForm();
+    if(respons.ok){
+      const response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      if (response.ok) {
+        toast.success("Transaction Successful..");
+        fetchAccounts();
+        resetForm();
+      }
     }
   };
 

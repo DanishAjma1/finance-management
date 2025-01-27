@@ -3,13 +3,22 @@ import { NextResponse } from "next/server";
 
 export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  const signInUrl = new URL("/pages/signIn", req.url);
+  const homeUrl = new URL("/", req.url);
+
   if (!token) {
-    const signInUrl = new URL("/pages/signIn", req.url);
-    return NextResponse.redirect(signInUrl);
+    if (req.nextUrl.pathname !== "/pages/signIn") {
+      return NextResponse.redirect(signInUrl);
+    }
+  } else {
+    if (req.nextUrl.pathname === "/pages/signIn") {
+      return NextResponse.redirect(homeUrl);
+    }
   }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/"],
+  matcher: ["/", "/pages/signIn"],
 };

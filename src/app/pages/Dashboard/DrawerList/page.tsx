@@ -29,11 +29,6 @@ const navItems: NavItem[] = [
     path: "/pages/Transactions",
   },
   {
-    text: "Accounts",
-    icon: <MailIcon />,
-    path: "/pages/Accounts",
-  },
-  {
     text: "Card",
     icon: <MailIcon />,
     path: "/pages/Card",

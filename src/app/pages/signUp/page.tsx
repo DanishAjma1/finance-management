@@ -125,7 +125,7 @@ export default function SignUp() {
                   type="email"
                   name="email"
                   placeholder="your@email.com"
-                  // autoFocus
+                  autoComplete="off"
                   required
                   fullWidth
                   variant="outlined"
@@ -138,6 +138,7 @@ export default function SignUp() {
                   id="password"
                   label="Password"
                   type="password"
+                  autoComplete="off"
                   name="password"
                   placeholder="••••••"
                   required
