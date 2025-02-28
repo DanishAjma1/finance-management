@@ -33,7 +33,7 @@ export default function Sidebar() {
           </Grid2>
 
           <Typography sx={{ fontFamily: "sans-serif" }}>
-            Danish Ajmal
+            Umar Nadeem
           </Typography>
         </StyledGrid>
         <Grid2 sx={{ marginTop: 5 }}>

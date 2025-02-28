@@ -165,7 +165,7 @@ const DashboardAndCharts = () => {
           text: "Account Owners",
           color: "#3F51B5",
           font: {
-            weight: "bold",
+            weight: "bold" as "bold",
           },
         },
       },
@@ -176,7 +176,7 @@ const DashboardAndCharts = () => {
           text: "Accounts ($)",
           color: "#3F51B5",
           font: {
-            weight: "bold",
+            weight: "bold" as "bold",
           },
         },
       },
@@ -184,14 +184,14 @@ const DashboardAndCharts = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top",
+        position: "top" as const, // Corrected position value
       },
       title: {
         display: true,
         text: "Total Account Analytics",
         color: "#3F51B5",
         font: {
-          weight: "bold",
+          weight: "bold" as "bold",
           size: 20,
         },
       },

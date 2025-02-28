@@ -3,7 +3,7 @@ import connectMongoDB from "../../lib/mongoDb";
 import { ObjectId } from "mongodb";
 import User from "../../models/users";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../lib/authOptions";
 
 const getUserID = async () => {
   try {
@@ -26,7 +26,7 @@ const getUserID = async () => {
 
 export async function POST(req) {
   try {
-    const { description, acc_num, amount, date } = await req.json();
+    const { description, acc_num, amount, date,accountType } = await req.json();
     if (!description || !acc_num || !amount || !date) {
       return new Response(JSON.stringify({ message: "All fields are required" }), {
         status: 400,
@@ -46,6 +46,7 @@ export async function POST(req) {
       acc_num,
       date,
       user_id: userId,
+      accountType,
     });
 
     return new Response(

@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../lib/authOptions";
 import { NextResponse } from "next/server";
 import connectMongoDB from "../../lib/mongoDb";
 import bankAccounts from "../../models/bankAccounts";

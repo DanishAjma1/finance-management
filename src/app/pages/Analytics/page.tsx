@@ -16,17 +16,18 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const BarChart = () => {
   const fetchAccounts = async () => {
     try {
-      const response = await fetch("/api/bankAccounts", {
+      const response = await fetch("/api/transactions", {
         method: "GET",
       });
       if (response.ok) {
-        const { bankAccount } = await response.json();
+        const { transactions } = await response.json();
         setAccounts(
-          bankAccount.map((account) => {
+          transactions.map((account) => {
             return {
+              accountType:account.accountType,
               acc_num: account.acc_num,
-              label: account.name,
-              balance: account.balance,
+              label: account.description,
+              amount: account.amount,
             };
           })
         );
@@ -41,18 +42,21 @@ const BarChart = () => {
   }, []);
   const [accounts,setAccounts] = React.useState([]);
   const data = {
-    labels: accounts.map((account) => account.label),
+    labels: ["CREDIT Transactions", "DEBIT Transactions"], 
     datasets: [
       {
-        label: "Accounts ($)",
-        data: accounts.map((account) => account.balance),
-        backgroundColor: "linear-gradient(90deg, rgba(63, 81, 181, 0.6), rgba(33, 150, 243, 0.6))", // Gradient effect
-        borderColor: "rgb(75, 0, 44)",
+        label: "Transaction Details",
+        data: [
+          accounts.filter((account) => account.accountType === "debit").length, 
+          accounts.reduce((total, account) => total + account.amount, 0), 
+        ],
+        backgroundColor: ["rgba(63, 81, 181, 0.6)", "rgba(255, 99, 132, 0.6)"], // Colors for the bars
+        borderColor: ["rgb(63, 81, 181)", "rgb(255, 99, 132)"],
         borderWidth: 1,
       },
     ],
   };
-
+  
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -67,7 +71,7 @@ const BarChart = () => {
           text: "Accounts Owners",
           color: "rgb(0, 38, 51)",
           font: {
-            weight: "bold",
+            weight: "bold" as const,
           },
         },
       },
@@ -78,7 +82,7 @@ const BarChart = () => {
           text: "Accounts ($)",
           color: "rgb(0, 27, 36)",
           font: {
-            weight: "bold",
+            weight: "bold" as const,
           },
         },
       },
@@ -86,14 +90,14 @@ const BarChart = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top",
+        position: "top" as const,
       },
       title: {
         display: true,
         text: "Total Accounts Analytics",
         color: "rgb(22, 0, 79)",
         font: {
-          weight: "bold",
+          weight: "bold" as const,
         },
       },
     },

@@ -121,7 +121,7 @@ export default function SignUp() {
                     "You Signed Up in Finance Management Application,now please sign in to continue.",
                 });
                 resetForm();
-                router.push("/");
+                router.push("/pages/signIn");
               } else {
                 alert("Something went wrong!");
               }

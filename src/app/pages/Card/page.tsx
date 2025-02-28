@@ -380,13 +380,13 @@ export default function CardManagement() {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.name && Boolean(errors.name)}
-                    helperText={touched.name && errors.name}
+                    helperText={touched.name && typeof errors.name === 'string' ? errors.name : ''}
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
                   <TextField
                     select
-                    name="acc_num"
+                    name="number"
                     value={values.number}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -394,7 +394,7 @@ export default function CardManagement() {
                     fullWidth
                     variant="outlined"
                     error={touched.number && Boolean(errors.number)}
-                    helperText={touched.number && errors.number}
+                    helperText={touched.number && typeof errors.number === 'string' ? errors.number : ''}
                     label="Account Number"
                   >
                     {accounts.map((account) => (
@@ -413,7 +413,7 @@ export default function CardManagement() {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.expiry && Boolean(errors.expiry)}
-                    helperText={touched.expiry && errors.expiry}
+                    helperText={touched.expiry && typeof errors.expiry === 'string' ? errors.expiry : ''}
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
@@ -425,7 +425,7 @@ export default function CardManagement() {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.cvv && Boolean(errors.cvv)}
-                    helperText={touched.cvv && errors.cvv}
+                    helperText={touched.cvv && typeof errors.cvv === 'string' ? errors.cvv : ''}
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
@@ -438,7 +438,7 @@ export default function CardManagement() {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.pin && Boolean(errors.pin)}
-                    helperText={touched.pin && errors.pin}
+                    helperText={touched.pin && typeof errors.pin === 'string' ? errors.pin : ''}
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
@@ -451,7 +451,7 @@ export default function CardManagement() {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.limit && Boolean(errors.limit)}
-                    helperText={touched.limit && errors.limit}
+                    helperText={touched.limit && typeof errors.limit === 'string' ? errors.limit : ''}
                   />
                 </StyledFormControl>
               </StyledDialogContent>

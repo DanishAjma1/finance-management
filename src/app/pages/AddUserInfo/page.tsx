@@ -16,21 +16,12 @@ import {
   CardContent,
   Chip,
   Grid2,
-  Paper,
   styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
-import { Formik } from "formik";
-import { Add, Done } from "@mui/icons-material";
-import { json } from "stream/consumers";
+import { Form, Formik } from "formik";
+import { Add } from "@mui/icons-material";
 import { Account } from "@toolpad/core";
-import { features } from "process";
 import { toast } from "react-toastify";
 
 interface Account {
@@ -44,7 +35,7 @@ export default function AddUserInfo() {
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpen(true);
   const handleCloseModal = () => setOpen(false);
-  const [open, setOpen] = React.useState<Boolean>(false);
+  const [open, setOpen] = React.useState<boolean>(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [accounts, setAccounts] = React.useState<Account[]>([]);
@@ -66,7 +57,7 @@ export default function AddUserInfo() {
     padding: 30,
   }));
 
-  const FormContainer = styled(Box)(({}) => ({
+  const FormContainer = styled(Form)(({}) => ({
     marginTop: 0,
     backgroundColor: "",
     width: "85%",
@@ -387,6 +378,7 @@ export default function AddUserInfo() {
                       acc_num: values.acc_num,
                       balance: values.balance,
                     };
+                    console.log(newAccount);
                     const response = await fetch("/api/bankAccounts", {
                       method: "POST",
                       headers: {
@@ -408,8 +400,8 @@ export default function AddUserInfo() {
                   });
                 }}
               >
-                {({ values, handleChange, handleSubmit, errors, touched }) => (
-                  <FormContainer component="form" onSubmit={handleSubmit}>
+                {({ values, handleChange, errors, touched }) => (
+                  <FormContainer>
                     <Typography
                       variant="h5"
                       sx={{ marginBottom: "30px", fontWeight: "bold" }}

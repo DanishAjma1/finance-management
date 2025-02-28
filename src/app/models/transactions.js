@@ -9,6 +9,10 @@ const transactionSchema = new Schema({
     type: Number,
     required: true,
   },
+  accountType: {
+    type: String,
+    default:"Debit",
+  },
   acc_num: {
     type: String,
     required: true,

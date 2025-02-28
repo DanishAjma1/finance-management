@@ -86,6 +86,7 @@ const TransactionPage = () => {
     amount: "",
     date: "",
     acc_num: "",
+    accountType:"Debit"
   };
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -98,7 +99,7 @@ const TransactionPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ acc_num: values.acc_num, amount: values.amount }),
+      body: JSON.stringify({ acc_num: values.acc_num, amount: values.amount,accountType:values.accountType }),
     });
     if (respons.ok) {
       const response = await fetch("/api/transactions", {
@@ -138,6 +139,18 @@ const TransactionPage = () => {
                   label="Description(Optional)"
                   name="description"
                   value={values.description}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  fullWidth
+                  variant="outlined"
+                  error={touched.description && Boolean(errors.description)}
+                  helperText={touched.description && errors.description}
+                />
+                <TextField
+                disabled
+                  
+                  name="accountType"
+                  value={values.accountType}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   fullWidth
@@ -218,6 +231,7 @@ const TransactionPage = () => {
               <StyledCell>Amount</StyledCell>
               <StyledCell>Date</StyledCell>
               <StyledCell>Account Number</StyledCell>
+              <StyledCell>Account Type</StyledCell>
               <StyledCell>Actions</StyledCell>
             </TableRow>
           </TableHead>
@@ -228,6 +242,7 @@ const TransactionPage = () => {
                 <TableCell>{transaction.amount}</TableCell>
                 <TableCell>{transaction.date}</TableCell>
                 <TableCell>********{transaction.acc_num.slice(-5)}</TableCell>
+                <TableCell>{transaction.accountType}</TableCell>
                 <TableCell>
                   <Grid2
                     container
