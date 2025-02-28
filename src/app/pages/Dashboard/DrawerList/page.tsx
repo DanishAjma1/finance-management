@@ -75,7 +75,7 @@ const DrawerList = () => {
       <List>
         {navItems.map((item) => (
           <StyledListItem key={item.text} disablePadding>
-            <StyledButton component={Link} href={item.path}>
+            <StyledButton href={item.path}>
               <StyledListItemIcon className="MuiListItemIcon-root">
                 {item.icon}
               </StyledListItemIcon>

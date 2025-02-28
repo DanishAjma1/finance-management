@@ -11,7 +11,7 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import ForgotPassword from "./forgotPassword";
 import { Box } from "@mui/material";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -35,10 +35,11 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(4),
 }));
 
-const FormContainer = styled(Box)(({}) => ({
+const FormContainer = styled(Form)(({}) => ({
   display: "flex",
   flexDirection: "column",
   width: "90%",
+  gap: "20px",
   alignSelf: "center",
 }));
 
@@ -105,7 +106,7 @@ export default function SignIn() {
             }}
           >
             {({ values, handleChange, handleSubmit, errors, touched }) => (
-              <FormContainer component="form" onSubmit={handleSubmit} gap={3}>
+              <FormContainer>
                 <FormControl>
                   <TextField
                     error={touched.email && Boolean(errors.email)}

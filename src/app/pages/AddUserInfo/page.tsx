@@ -424,7 +424,7 @@ export default function AddUserInfo() {
                         autoFocus
                         onChange={handleChange}
                         error={touched.name && Boolean(errors.name)}
-                        helperText={touched.name && errors.name}
+                        helperText={touched.name && typeof errors.name === "string" ? errors.name : ""}
                         fullWidth
                         required
                       />
@@ -437,7 +437,7 @@ export default function AddUserInfo() {
                         value={values.balance}
                         onChange={handleChange}
                         error={touched.balance && Boolean(errors.balance)}
-                        helperText={touched.balance && errors.balance}
+                        helperText={touched.balance && typeof errors.balance === "string" ? errors.balance : ""}
                         fullWidth
                         required
                       />
@@ -450,7 +450,7 @@ export default function AddUserInfo() {
                         value={values.acc_num}
                         onChange={handleChange}
                         error={touched.acc_num && Boolean(errors.acc_num)}
-                        helperText={touched.acc_num && errors.acc_num}
+                        helperText={touched.acc_num && typeof errors.acc_num === "string" ? errors.acc_num : ""}
                         fullWidth
                         required
                       />
@@ -464,7 +464,7 @@ export default function AddUserInfo() {
                         onChange={handleChange}
                         sx={{ width: "100%", backgroundColor: "transparent" }}
                         error={
-                          touched.description && Boolean(errors.description)
+                          touched.description && typeof errors.description === "string"? true : false
                         }
                         required
                       />

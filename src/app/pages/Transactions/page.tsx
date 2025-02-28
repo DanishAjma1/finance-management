@@ -144,7 +144,7 @@ const TransactionPage = () => {
                   fullWidth
                   variant="outlined"
                   error={touched.description && Boolean(errors.description)}
-                  helperText={touched.description && errors.description}
+                  helperText={touched.description && typeof errors.description === "string" ? errors.description : null}
                 />
                 <TextField
                 disabled
@@ -156,7 +156,7 @@ const TransactionPage = () => {
                   fullWidth
                   variant="outlined"
                   error={touched.description && Boolean(errors.description)}
-                  helperText={touched.description && errors.description}
+                  helperText={touched.description && typeof errors.description === "string" ? errors.description : null}
                 />
                 <TextField
                   label="Amount"
@@ -168,7 +168,7 @@ const TransactionPage = () => {
                   variant="outlined"
                   type="number"
                   error={touched.amount && Boolean(errors.amount)}
-                  helperText={touched.amount && errors.amount}
+                  helperText={touched.amount && typeof errors.amount === "string" ? errors.amount : null}
                 />
                 <TextField
                   name="date"
@@ -179,7 +179,7 @@ const TransactionPage = () => {
                   variant="outlined"
                   type="date"
                   error={touched.date && Boolean(errors.date)}
-                  helperText={touched.date && errors.date}
+                  helperText={touched.date && typeof errors.date === "string" ? errors.date : null}
                 />
                 <TextField
                   select
@@ -191,7 +191,7 @@ const TransactionPage = () => {
                   fullWidth
                   variant="outlined"
                   error={touched.acc_num && Boolean(errors.acc_num)}
-                  helperText={touched.acc_num && errors.acc_num}
+                  helperText={touched.acc_num && typeof errors.acc_num === "string" ? errors.acc_num : null}
                   label="Account Number"
                 >
                   {accounts.map((account) => (

@@ -12,7 +12,7 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import { Grid2 } from "@mui/material";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { Mail } from "../../lib/send-mail";
@@ -40,10 +40,11 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   justifyContent: "space-between",
 }));
 
-const FormContainer = styled(Box)(({}) => ({
+const FormContainer = styled(Form)(({}) => ({
   display: "flex",
   flexDirection: "column",
   width: "90%",
+  gap: "20px",
   alignSelf: "center",
 }));
 
@@ -127,8 +128,8 @@ export default function SignUp() {
               }
             }}
           >
-            {({ values, handleChange, handleSubmit, errors, touched }) => (
-              <FormContainer component="form" gap={2} onSubmit={handleSubmit}>
+            {({ values, handleChange, errors, touched }) => (
+              <FormContainer>
                 <TextField
                   error={touched.email && Boolean(errors.email)}
                   helperText={touched.email && errors.email}
