@@ -6,10 +6,13 @@ WORKDIR /app
 
 # 3️⃣ Copy package.json and install dependencies
 COPY package.json package-lock.json ./
+
 RUN npm install
 
 # 4️⃣ Copy the entire project
 COPY . .
+
+# Build the Next.js application
 RUN npm run build
 
 # 5️⃣ Expose the port Next.js runs on
