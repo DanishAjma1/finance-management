@@ -2,8 +2,12 @@ import mongoose from "mongoose";
 
 const connectMongoDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-  } catch (error) {
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+    }  } catch (error) {
     console.log(error);
   }
 };

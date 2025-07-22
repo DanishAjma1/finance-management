@@ -6,17 +6,26 @@ import jwt from "jsonwebtoken";
 
 export async function POST(req) {
   try {
-    const { name, description, balance } = await req.json();
+    const { name, description, balance, acc_num } = await req.json();
 
     await connectMongoDB();
+
+    if (await bankAccounts.findOne({ acc_num: new Object(acc_num) })) {
+      console.log("Account already exist");
+      return new Response(
+        { message: "Account already exist" },
+        { status: 400 } 
+      );
+    }
     const userId = getUserID(req);
-    const saveAccount = await bankAccounts.create({
+    await bankAccounts.create({
       name,
       description,
       balance,
+      acc_num,
       user_id: userId,
     });
-    return new Response(JSON.stringify({ saveAccount }), { status: 201 });
+    return new Response(JSON.stringify({message:"Data inserted.." }), { status: 201 });
   } catch (error) {
     return new Response({ error }, { status: 500 });
   }
@@ -108,5 +117,35 @@ export async function DELETE(req) {
     return new Response(JSON.stringify({ message: "Something went wrong" }), {
       status: 500,
     });
+  }
+}
+
+export async function PATCH(req) {
+  try {
+    const { acc_num, amount } = await req.json();
+    await connectMongoDB();
+    const account = await bankAccounts.findOne({ acc_num });
+    if (!account) {
+      return new Response(
+        JSON.stringify({ message: "Account doesn't exist." }),
+        { status: 400 }
+      );
+    }
+    const updatedAmount = account.balance - amount;
+    await bankAccounts.updateOne(
+      { _id: account._id },
+      { $set: { balance: updatedAmount } }
+    );
+
+    return new Response(
+      JSON.stringify({ message: "Account updated successfully." }),
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return new Response(
+      JSON.stringify({ message: "Something went wrong." }),
+      { status: 500 }
+    );
   }
 }
