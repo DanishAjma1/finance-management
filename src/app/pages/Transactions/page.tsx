@@ -42,16 +42,17 @@ const TransactionPage = () => {
     fontWeight: "lighter",
     border:"5px solid black",
   }));
-  const deleteButton = async (tran) =>{
+  const deleteButton = async (tran) => {
     try {
       const response = await fetch(`/api/transactions?id=${tran._id}`, {
         method: "DELETE",
       });
       if (response.ok) {
-        const updatedTransactions =
-          transactions.filter((transaction) => transaction._id !== tran._id )
-          setTransactions(updatedTransactions);
-          toast.info("Transaction deleted successfully..");
+        const updatedTransactions = transactions.filter(
+          (transaction) => transaction._id !== tran._id
+        );
+        setTransactions(updatedTransactions);
+        toast.info("Transaction deleted successfully..");
       }
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -86,30 +87,34 @@ const TransactionPage = () => {
     amount: "",
     date: "",
     acc_num: "",
+    accountType:"Debit"
   };
 
   const handleSubmit = async (values, { resetForm }) => {
     if (!values.date) {
-      values.date = new Date(Date.now()).toISOString().split("T")[0];
+      values.date = new Date(Date.now()).toDateString().split("T")[0];
     }
-    const response = await fetch("/api/transactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+
     const respons = await fetch("/api/bankAccounts", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ acc_num: values.acc_num, amount: values.amount }),
+      body: JSON.stringify({ acc_num: values.acc_num, amount: values.amount,accountType:values.accountType }),
     });
-    if (response.ok && respons.ok) {
-      toast.success("Transaction Successful..");
-      fetchAccounts();
-      resetForm();
+    if (respons.ok) {
+      const response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      if (response.ok) {
+        toast.success("Transaction Successful..");
+        fetchAccounts();
+        resetForm();
+      }
     }
   };
 
@@ -140,7 +145,19 @@ const TransactionPage = () => {
                   fullWidth
                   variant="outlined"
                   error={touched.description && Boolean(errors.description)}
-                  helperText={touched.description && errors.description}
+                  helperText={touched.description && typeof errors.description === "string" ? errors.description : null}
+                />
+                <TextField
+                disabled
+                  
+                  name="accountType"
+                  value={values.accountType}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  fullWidth
+                  variant="outlined"
+                  error={touched.description && Boolean(errors.description)}
+                  helperText={touched.description && typeof errors.description === "string" ? errors.description : null}
                 />
                 <TextField
                   label="Amount"
@@ -152,7 +169,7 @@ const TransactionPage = () => {
                   variant="outlined"
                   type="number"
                   error={touched.amount && Boolean(errors.amount)}
-                  helperText={touched.amount && errors.amount}
+                  helperText={touched.amount && typeof errors.amount === "string" ? errors.amount : null}
                 />
                 <TextField
                   name="date"
@@ -163,7 +180,7 @@ const TransactionPage = () => {
                   variant="outlined"
                   type="date"
                   error={touched.date && Boolean(errors.date)}
-                  helperText={touched.date && errors.date}
+                  helperText={touched.date && typeof errors.date === "string" ? errors.date : null}
                 />
                 <TextField
                   select
@@ -175,7 +192,7 @@ const TransactionPage = () => {
                   fullWidth
                   variant="outlined"
                   error={touched.acc_num && Boolean(errors.acc_num)}
-                  helperText={touched.acc_num && errors.acc_num}
+                  helperText={touched.acc_num && typeof errors.acc_num === "string" ? errors.acc_num : null}
                   label="Account Number"
                 >
                   {accounts.map((account) => (
@@ -215,6 +232,7 @@ const TransactionPage = () => {
               <StyledCell>Amount</StyledCell>
               <StyledCell>Date</StyledCell>
               <StyledCell>Account Number</StyledCell>
+              <StyledCell>Account Type</StyledCell>
               <StyledCell>Actions</StyledCell>
             </TableRow>
           </TableHead>
@@ -225,6 +243,7 @@ const TransactionPage = () => {
                 <TableCell>{transaction.amount}</TableCell>
                 <TableCell>{transaction.date = new Date(transaction.date).toISOString().split("T")[0]}</TableCell>
                 <TableCell>********{transaction.acc_num.slice(-5)}</TableCell>
+                <TableCell>{transaction.accountType}</TableCell>
                 <TableCell>
                   <Grid2
                     container

@@ -12,6 +12,9 @@ import Menu from "@mui/material/Menu";
 import { Drawer } from "@mui/material";
 import DrawerList from "./DrawerList/page";
 import Grid2 from "@mui/material/Grid2";
+import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [auth] = React.useState<boolean>(true);
@@ -29,6 +32,37 @@ export default function Dashboard() {
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
+  };
+  const { status } = useSession();
+
+  const router = useRouter();
+
+  const showSession = () => {
+    if (status === "authenticated") {
+      return (
+        <button
+          className="border border-solid border-black rounded"
+          onClick={() => {
+            signOut({ redirect: false }).then(() => {
+              router.push("/");
+            });
+          }}
+        >
+          Sign Out
+        </button>
+      );
+    } else if (status === "loading") {
+      return <span className="text-[#888] text-sm mt-7">Loading...</span>;
+    } else {
+      return (
+        <Link
+          href="/pages/signIn"
+          className="border border-solid border-black rounded"
+        >
+          Sign In
+        </Link>
+      );
+    }
   };
 
   return (
@@ -84,8 +118,8 @@ export default function Dashboard() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={handleClose}>{showSession()}</MenuItem>
+                {/* <MenuItem onClick={handleClose}>My account</MenuItem> */}
               </Menu>
             </Grid2>
           )}

@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Bar } from "react-chartjs-2";
-import { Box, Typography, Paper, Grid, Grid2 } from "@mui/material";
+import { Box, Typography, Paper, Grid2, Button } from "@mui/material";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,25 +12,51 @@ import {
   Legend,
 } from "chart.js";
 
-// Register Chart.js modules
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
 const BarChart = () => {
-  // Chart Data
+  const fetchAccounts = async () => {
+    try {
+      const response = await fetch("/api/transactions", {
+        method: "GET",
+      });
+      if (response.ok) {
+        const { transactions } = await response.json();
+        setAccounts(
+          transactions.map((account) => {
+            return {
+              accountType:account.accountType,
+              acc_num: account.acc_num,
+              label: account.description,
+              amount: account.amount,
+            };
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
+  };
+  
+  React.useEffect(() => {
+    fetchAccounts();
+  }, []);
+  const [accounts,setAccounts] = React.useState([]);
   const data = {
-    labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    labels: ["CREDIT Transactions", "DEBIT Transactions"], 
     datasets: [
       {
-        label: "Sales ($)",
-        data: [1200, 1900, 3000, 5000, 2400, 3200, 4000, 2800, 3300, 3500, 4200, 4600],
-        backgroundColor: "linear-gradient(90deg, rgba(63, 81, 181, 0.6), rgba(33, 150, 243, 0.6))", // Gradient effect
-        borderColor: "rgb(75, 0, 44)",
+        label: "Transaction Details",
+        data: [
+          accounts.filter((account) => account.accountType === "debit").length, 
+          accounts.reduce((total, account) => total + account.amount, 0), 
+        ],
+        backgroundColor: ["rgba(63, 81, 181, 0.6)", "rgba(255, 99, 132, 0.6)"], // Colors for the bars
+        borderColor: ["rgb(63, 81, 181)", "rgb(255, 99, 132)"],
         borderWidth: 1,
       },
     ],
   };
-
-  // Chart Options
+  
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -42,10 +68,10 @@ const BarChart = () => {
         display: true,
         title: {
           display: true,
-          text: "Month",
+          text: "Accounts Owners",
           color: "rgb(0, 38, 51)",
           font: {
-            weight: "bold",
+            weight: "bold" as const,
           },
         },
       },
@@ -53,10 +79,10 @@ const BarChart = () => {
         display: true,
         title: {
           display: true,
-          text: "Sales ($)",
+          text: "Accounts ($)",
           color: "rgb(0, 27, 36)",
           font: {
-            weight: "bold",
+            weight: "bold" as const,
           },
         },
       },
@@ -64,26 +90,34 @@ const BarChart = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top",
+        position: "top" as const,
       },
       title: {
         display: true,
-        text: "Monthly Sales Analytics",
+        text: "Total Accounts Analytics",
         color: "rgb(22, 0, 79)",
         font: {
-          weight: "bold",
+          weight: "bold" as const,
         },
       },
     },
   };
+  const highestAccount = accounts.length > 0
+  ? accounts.reduce((highestAcc, acc) => (acc.balance > highestAcc.balance ? acc : highestAcc), accounts[0])
+  : "No Accounts available";
 
-  // Analytics Insights
+  const lowestAccount = accounts.length > 0
+  ? accounts.reduce((highestAcc, acc) => (acc.balance < highestAcc.balance ? acc : highestAcc), accounts[0])
+  : "No Accounts available";
+
+  const averageBalance = accounts.length > 0
+  ? accounts.reduce((sum, acc) => sum + acc.balance, 0) / accounts.length
+  : 0;
+
   const insights = [
-    { title: "Highest Sales", detail: "April saw the highest sales at $5000." },
-    { title: "Lowest Sales", detail: "January had the lowest sales at $1200." },
-    { title: "Average Sales", detail: "Average monthly sales: $2783." },
-    { title: "Growth", detail: "Significant growth observed in March and April." },
-  ];
+    { title: "Highest Amount Account",detail: highestAccount.acc_num + " had the highest balance at $"+ highestAccount.balance+"."},
+    { title: "Lowest Amount Account", detail: lowestAccount.acc_num +  " had the lowest balance at $"+ lowestAccount.balance+"."},
+    { title: "Average Amount Account", detail: "Average Accounts Debits: "+ "$" + averageBalance+"." },  ];
 
   return (
     <Paper elevation={6} sx={{ padding: 4, marginTop: 4, borderRadius: 3, backgroundColor: "#F5F5F5" }}>

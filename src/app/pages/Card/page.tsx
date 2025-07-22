@@ -17,6 +17,7 @@ import {
   FormControl,
   styled,
   Icon,
+  MenuItem,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { Formik, Form, Field } from "formik";
@@ -47,6 +48,7 @@ export default function CardManagement() {
   });
   const [cards, setCards] = useState([]);
   const [open, setOpen] = useState(false);
+  const [accounts, setAccounts] = React.useState([]);
 
   const fetchCards = async () => {
     try {
@@ -62,8 +64,22 @@ export default function CardManagement() {
       console.error("Error fetching accounts:", error);
     }
   };
+  const fetchAccounts = async () => {
+    try {
+      const res = await fetch("/api/bankAccounts", {
+        method: "GET",
+      });
+      if (res.ok) {
+        const { bankAccount } = await res.json();
+        setAccounts(bankAccount);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   React.useEffect(() => {
     fetchCards();
+    fetchAccounts();
   }, []);
 
   const handleOpen = () => setOpen(true);
@@ -360,43 +376,56 @@ export default function CardManagement() {
                     label="Cardholder Name"
                     name="name"
                     value={values.name}
+                    autoComplete="off"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.name && Boolean(errors.name)}
-                    helperText={touched.name && errors.name}
+                    helperText={touched.name && typeof errors.name === 'string' ? errors.name : ''}
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
                   <TextField
-                    label="Card Number"
+                    select
                     name="number"
                     value={values.number}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    type="text"
+                    fullWidth
+                    variant="outlined"
                     error={touched.number && Boolean(errors.number)}
-                    helperText={touched.number && errors.number}
-                  />
+                    helperText={touched.number && typeof errors.number === 'string' ? errors.number : ''}
+                    label="Account Number"
+                  >
+                    {accounts.map((account) => (
+                      <MenuItem key={account._id} value={account.acc_num}>
+                        {account.acc_num}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
                   <TextField
                     label="Expiry Date (MM/YY)"
                     name="expiry"
+                    autoComplete="off"
                     value={values.expiry}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.expiry && Boolean(errors.expiry)}
-                    helperText={touched.expiry && errors.expiry}
+                    helperText={touched.expiry && typeof errors.expiry === 'string' ? errors.expiry : ''}
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
                   <TextField
                     label="CVV"
                     name="cvv"
+                    autoComplete="off"
                     value={values.cvv}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.cvv && Boolean(errors.cvv)}
-                    helperText={touched.cvv && errors.cvv}
+                    helperText={touched.cvv && typeof errors.cvv === 'string' ? errors.cvv : ''}
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
@@ -405,10 +434,11 @@ export default function CardManagement() {
                     name="pin"
                     type="password"
                     value={values.pin}
+                    autoComplete="off"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.pin && Boolean(errors.pin)}
-                    helperText={touched.pin && errors.pin}
+                    helperText={touched.pin && typeof errors.pin === 'string' ? errors.pin : ''}
                   />
                 </StyledFormControl>
                 <StyledFormControl fullWidth>
@@ -416,11 +446,12 @@ export default function CardManagement() {
                     label="Spending Limit"
                     name="limit"
                     type="number"
+                    autoComplete="off"
                     value={values.limit}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.limit && Boolean(errors.limit)}
-                    helperText={touched.limit && errors.limit}
+                    helperText={touched.limit && typeof errors.limit === 'string' ? errors.limit : ''}
                   />
                 </StyledFormControl>
               </StyledDialogContent>

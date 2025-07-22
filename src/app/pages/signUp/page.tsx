@@ -12,9 +12,11 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import { Grid2 } from "@mui/material";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
+import { Mail } from "../../lib/send-mail";
+import { toast } from "react-toastify";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -38,10 +40,11 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   justifyContent: "space-between",
 }));
 
-const FormContainer = styled(Box)(({}) => ({
+const FormContainer = styled(Form)(({}) => ({
   display: "flex",
   flexDirection: "column",
   width: "90%",
+  gap: "20px",
   alignSelf: "center",
 }));
 
@@ -63,14 +66,16 @@ const validationSchema = Yup.object().shape({
 
 export default function SignUp() {
   const router = useRouter();
-    React.useEffect(() => {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("auth_token="));
-      if (token) {
-        router.push("/");
-      }
-    }, []);
+
+  React.useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("auth_token="));
+    if (token) {
+      router.push("/");
+    }
+  }, [router]);
+
   return (
     <Grid2>
       <CssBaseline enableColorScheme />
@@ -96,7 +101,7 @@ export default function SignUp() {
               remember: false,
             }}
             validationSchema={validationSchema}
-            onSubmit={async (values) => {
+            onSubmit={async (values, { resetForm }) => {
               const response = await fetch("/api/auth/signUp", {
                 method: "POST",
                 headers: {
@@ -105,18 +110,26 @@ export default function SignUp() {
                 body: JSON.stringify({
                   email: values.email,
                   password: values.password,
-                 }),
+                }),
               });
 
               if (response.ok) {
-                window.location.href = "/pages/signIn"; // Redirect to sign-in page
+                toast.success("User added");
+                await Mail({
+                  to: values.email,
+                  subject: "Sign-up successful",
+                  message:
+                    "You Signed Up in Finance Management Application,now please sign in to continue.",
+                });
+                resetForm();
+                router.push("/pages/signIn");
               } else {
                 alert("Something went wrong!");
               }
             }}
           >
-            {({ values, handleChange, handleSubmit, errors, touched }) => (
-              <FormContainer component="form" onSubmit={handleSubmit} gap={2}>
+            {({ values, handleChange, errors, touched }) => (
+              <FormContainer>
                 <TextField
                   error={touched.email && Boolean(errors.email)}
                   helperText={touched.email && errors.email}
@@ -125,7 +138,7 @@ export default function SignUp() {
                   type="email"
                   name="email"
                   placeholder="your@email.com"
-                  // autoFocus
+                  autoComplete="off"
                   required
                   fullWidth
                   variant="outlined"
@@ -138,6 +151,7 @@ export default function SignUp() {
                   id="password"
                   label="Password"
                   type="password"
+                  autoComplete="off"
                   name="password"
                   placeholder="••••••"
                   required
@@ -147,13 +161,16 @@ export default function SignUp() {
                   onChange={handleChange}
                 />
                 <TextField
-                  error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+                  error={
+                    touched.confirmPassword && Boolean(errors.confirmPassword)
+                  }
                   helperText={touched.confirmPassword && errors.confirmPassword}
                   id="confirmPassword"
                   label="Confirm Password"
                   type="password"
                   name="confirmPassword"
                   placeholder="••••••"
+                  autoComplete="off"
                   required
                   fullWidth
                   variant="outlined"

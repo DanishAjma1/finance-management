@@ -1,9 +1,7 @@
 "use client";
 import * as React from "react";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
@@ -13,9 +11,10 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import ForgotPassword from "./forgotPassword";
 import { Box } from "@mui/material";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -36,10 +35,11 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(4),
 }));
 
-const FormContainer = styled(Box)(({}) => ({
+const FormContainer = styled(Form)(({}) => ({
   display: "flex",
   flexDirection: "column",
   width: "90%",
+  gap: "20px",
   alignSelf: "center",
 }));
 
@@ -80,14 +80,6 @@ export default function SignIn() {
   }));
   const router = useRouter();
 
-  React.useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("auth_token="));
-    if (token) {
-      router.push("/");
-    }
-  }, []);
   return (
     <Box>
       <CssBaseline enableColorScheme />
@@ -98,16 +90,15 @@ export default function SignIn() {
             initialValues={{
               email: "",
               password: "",
-              remember: false,
             }}
             validationSchema={validationSchema}
             onSubmit={async (values) => {
-              const res = await fetch("/api/auth/signIn", {
-                method: "POST",
-                body: JSON.stringify({
-                  email: values.email,
-                  password: values.password,
-                }),
+              console.log(values);
+              const res = await signIn("credentials", {
+                email: values.email,
+                password: values.password,
+                callbackUrl: "/",
+                redirect: false,
               });
               if (res.ok) {
                 router.push("/");
@@ -115,7 +106,7 @@ export default function SignIn() {
             }}
           >
             {({ values, handleChange, handleSubmit, errors, touched }) => (
-              <FormContainer component="form" onSubmit={handleSubmit} gap={3}>
+              <FormContainer>
                 <FormControl>
                   <TextField
                     error={touched.email && Boolean(errors.email)}
@@ -151,17 +142,6 @@ export default function SignIn() {
                     onChange={handleChange}
                   />
                 </FormControl>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="remember"
-                      color="primary"
-                      checked={values.remember}
-                      onChange={handleChange}
-                    />
-                  }
-                  label="Remember me"
-                />
                 <ForgotPassword open={open} handleClose={handleClose} />
                 <StyledButton type="submit" variant="outlined">
                   Sign in

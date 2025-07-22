@@ -16,21 +16,12 @@ import {
   CardContent,
   Chip,
   Grid2,
-  Paper,
   styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
-import { Formik } from "formik";
-import { Add, Done } from "@mui/icons-material";
-import { json } from "stream/consumers";
+import { Form, Formik } from "formik";
+import { Add } from "@mui/icons-material";
 import { Account } from "@toolpad/core";
-import { features } from "process";
 import { toast } from "react-toastify";
 
 interface Account {
@@ -44,7 +35,7 @@ export default function AddUserInfo() {
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpen(true);
   const handleCloseModal = () => setOpen(false);
-  const [open, setOpen] = React.useState<Boolean>(false);
+  const [open, setOpen] = React.useState<boolean>(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [accounts, setAccounts] = React.useState<Account[]>([]);
@@ -66,7 +57,7 @@ export default function AddUserInfo() {
     padding: 30,
   }));
 
-  const FormContainer = styled(Box)(({}) => ({
+  const FormContainer = styled(Form)(({}) => ({
     marginTop: 0,
     backgroundColor: "",
     width: "85%",
@@ -172,13 +163,37 @@ export default function AddUserInfo() {
             flexDirection: { xs: "column" },
           }}
         >
-          <StyledButton
-            sx={{ alignSelf: "end", padding: "8px 20px" }}
-            onClick={handleOpen}
-            startIcon={<Add />}
-          >
-            Create Account
-          </StyledButton>
+          <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+          Accounts
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          sx={{
+            backgroundColor: "#333",
+            textTransform: "none",
+            borderRadius: 2,
+            padding: "8px 20px",
+            boxShadow: 3,
+            "&:hover": {
+              backgroundColor: "#444",
+              transform: "scale(1.05)",
+              boxShadow: 5,
+            },
+          }}
+          onClick={handleOpen}
+        >
+          Create Account
+        </Button>
+      </Box>
           <Grid2 container spacing={3}>
             {accounts.map((account, index) => {
               const previousBalance =
@@ -363,6 +378,7 @@ export default function AddUserInfo() {
                       acc_num: values.acc_num,
                       balance: values.balance,
                     };
+                    console.log(newAccount);
                     const response = await fetch("/api/bankAccounts", {
                       method: "POST",
                       headers: {
@@ -384,8 +400,8 @@ export default function AddUserInfo() {
                   });
                 }}
               >
-                {({ values, handleChange, handleSubmit, errors, touched }) => (
-                  <FormContainer component="form" onSubmit={handleSubmit}>
+                {({ values, handleChange, errors, touched }) => (
+                  <FormContainer>
                     <Typography
                       variant="h5"
                       sx={{ marginBottom: "30px", fontWeight: "bold" }}
@@ -408,7 +424,7 @@ export default function AddUserInfo() {
                         autoFocus
                         onChange={handleChange}
                         error={touched.name && Boolean(errors.name)}
-                        helperText={touched.name && errors.name}
+                        helperText={touched.name && typeof errors.name === "string" ? errors.name : ""}
                         fullWidth
                         required
                       />
@@ -421,7 +437,7 @@ export default function AddUserInfo() {
                         value={values.balance}
                         onChange={handleChange}
                         error={touched.balance && Boolean(errors.balance)}
-                        helperText={touched.balance && errors.balance}
+                        helperText={touched.balance && typeof errors.balance === "string" ? errors.balance : ""}
                         fullWidth
                         required
                       />
@@ -434,7 +450,7 @@ export default function AddUserInfo() {
                         value={values.acc_num}
                         onChange={handleChange}
                         error={touched.acc_num && Boolean(errors.acc_num)}
-                        helperText={touched.acc_num && errors.acc_num}
+                        helperText={touched.acc_num && typeof errors.acc_num === "string" ? errors.acc_num : ""}
                         fullWidth
                         required
                       />
@@ -448,7 +464,7 @@ export default function AddUserInfo() {
                         onChange={handleChange}
                         sx={{ width: "100%", backgroundColor: "transparent" }}
                         error={
-                          touched.description && Boolean(errors.description)
+                          touched.description && typeof errors.description === "string"? true : false
                         }
                         required
                       />

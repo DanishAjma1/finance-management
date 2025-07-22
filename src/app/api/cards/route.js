@@ -1,33 +1,26 @@
 import { NextResponse } from "next/server";
 import connectMongoDB from "../../lib/mongoDb";
 import Card from "../../models/cards";
-import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../lib/authOptions";
+import User from "../../models/users";
 
-const getUserID = (req) => {
-  const cookies = req.headers.get("cookie");
-  if (!cookies) {
-    throw new Error("Unauthorized cookie");
-  }
-  const authToken = cookies
-    .split(";")
-    .find((cookie) => cookie.trim().startsWith("auth_token="))
-    ?.split("=")[1];
-
-  if (!authToken) {
-    throw new Error("Token not found");
-  }
-
+const getUserID = async () => {
   try {
-    const decoded = jwt.verify(authToken, process.env.JWT_SECRET);
-
-    if (!decoded || !decoded.id) {
-      throw new Error("Invalid token");
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.id) {
+      return null;
     }
 
-    return decoded.id;
-  } catch (err) {
-    throw new Error("Invalid or expired token");
+    const user = await User.findById(session.user.id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user._id.toString();
+  } catch (error) {
+    throw new Error("User undefined");
   }
 };
 
@@ -35,7 +28,13 @@ export async function POST(req) {
   try {
     const body = await req.json();
     await connectMongoDB();
-    const userId = getUserID(req);
+    const userId = await getUserID();
+
+    if (!userId) {
+      return new Response(JSON.stringify({ message: "User not authenticated" }), {
+        status: 401,
+      });
+    }
 
     const saveCard = await Card.create({
       ...body,
@@ -54,7 +53,12 @@ export async function POST(req) {
 export async function GET(req) {
   try {
     await connectMongoDB();
-    const userId = getUserID(req);
+    const userId = await getUserID();
+    if (!userId) {
+      return new Response(JSON.stringify({ message: "User not authenticated" }), {
+        status: 401,
+      });
+    }
     const cards = await Card.find({ user_id: userId });
     return NextResponse.json({ cards }, { status: 200 });
   } catch (error) {
@@ -63,24 +67,33 @@ export async function GET(req) {
     });
   }
 }
+
 export async function PUT(req) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    if (!id) {
-      return new Response(JSON.stringify({ message: "Id not found" }), {
+    if (!id || !ObjectId.isValid(id)) {
+      return new Response(JSON.stringify({ message: "Valid ID is required" }), {
         status: 400,
       });
     }
-    const body = req.json();
+    const body = await req.json();
     await connectMongoDB();
 
-    const res = await Card.updateOne({ _id: new Object(id) }, { $set: body });
+    const res = await Card.updateOne({ _id: new ObjectId(id) }, { $set: body });
+    if (res.matchedCount === 0) {
+      return new Response(
+        JSON.stringify({ message: "Card not found." }),
+        { status: 404 }
+      );
+    }
     return new Response(JSON.stringify({ message: "Updated Successfully.." }), {
       status: 200,
     });
   } catch (error) {
-    return new Response(error.message, { status: 500 });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
   }
 }
 
@@ -88,8 +101,21 @@ export async function DELETE(req) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
+
+    if (!id || !ObjectId.isValid(id)) {
+      return new Response(JSON.stringify({ message: "Valid ID is required" }), {
+        status: 400,
+      });
+    }
+
     await connectMongoDB();
-    await Card.deleteOne({ _id: new ObjectId(id) });
+    const res = await Card.deleteOne({ _id: new ObjectId(id) });
+    if (res.deletedCount === 0) {
+      return new Response(
+        JSON.stringify({ message: "Card not found." }),
+        { status: 404 }
+      );
+    }
     return new Response(JSON.stringify({ message: "Card Deleted.." }), {
       status: 200,
     });
