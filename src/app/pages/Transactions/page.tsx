@@ -40,6 +40,7 @@ const TransactionPage = () => {
     color: "white",
     fontSize: "medium",
     fontWeight: "lighter",
+    border:"5px solid black",
   }));
   const deleteButton = async (tran) => {
     try {
@@ -63,14 +64,14 @@ const TransactionPage = () => {
       const response = await fetch("/api/bankAccounts", {
         method: "GET",
       });
-      const response2 = await fetch("/api/transactions", {
+      const respons = await fetch("/api/transactions", {
         method: "GET",
       });
-      if (response.ok && response2.ok) {
+      if (response.ok && respons.ok) {
         const { bankAccount } = await response.json();
         setAccounts(bankAccount);
-        const { transactions } = await response2.json();
-        setTransactions(transactions);
+        const {transaction} = await respons.json();
+        setTransactions(transaction);
       }
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -240,7 +241,7 @@ const TransactionPage = () => {
               <TableRow key={index}>
                 <TableCell>{transaction.description}</TableCell>
                 <TableCell>{transaction.amount}</TableCell>
-                <TableCell>{transaction.date}</TableCell>
+                <TableCell>{transaction.date = new Date(transaction.date).toISOString().split("T")[0]}</TableCell>
                 <TableCell>********{transaction.acc_num.slice(-5)}</TableCell>
                 <TableCell>{transaction.accountType}</TableCell>
                 <TableCell>
@@ -255,7 +256,7 @@ const TransactionPage = () => {
                   >
                     <Button
                       onClick={() => deleteButton(transaction)}
-                      sx={{ backgroundColor: "error", height: 30 }}
+                      sx={{ }}
                     >
                       <Image
                         src="/delete.png"
